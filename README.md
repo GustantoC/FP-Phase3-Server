@@ -76,13 +76,13 @@
 ```json
 [
   {
-    id: "integer",
-    name: "string",
-    passportNumber: "string",
-    role: |> One of the list of Roles <|,
-    email: "string",
-    phoneNumber: "string",
-    status: |> One of the list of Status <|
+    "id": "integer",
+    "name": "string",
+    "passportNumber": "string",
+    "role": |> One of the list of Roles <|,
+    "email": "string",
+    "phoneNumber": "string",
+    "status": |> One of the list of Status <|
   },
   ...
 ]
@@ -109,13 +109,13 @@
 #### `200` - OK
 ```json
 {
-  id: "integer",
-  name: "string",
-  passportNumber: "string",
-  role: |> One of the list of Roles <|,
-  email: "string",
-  phoneNumber: "string",
-  status: |> One of the list of Status <|
+  "id": "integer",
+  "name": "string",
+  "passportNumber": "string",
+  "role": |> One of the list of Roles <|,
+  "email": "string",
+  "phoneNumber": "string",
+  "status": |> One of the list of Status <|
 }
 ```
 
@@ -123,7 +123,7 @@
 #### `404` - NotFound
 ```json
 {
-  message: "Can't find user"
+  "message": "Can't find user"
 }
 ```
 
@@ -151,13 +151,13 @@ and `status` of `ArrivalProcedure`
 #### `201` - Created
 ```json
 {
-  id: "integer",
-  name: "string",
-  passportNumber: "string",
-  role: "User",
-  email: "string",
-  phoneNumber: "string",
-  status: "ArrivalProcedure"
+  "id": "integer",
+  "name": "string",
+  "passportNumber": "string",
+  "role": "User",
+  "email": "string",
+  "phoneNumber": "string",
+  "status": "ArrivalProcedure"
 }
 ```
 
@@ -165,35 +165,35 @@ and `status` of `ArrivalProcedure`
 #### `400` - BadParameter
 ```json
 {
-  message: "Name is required"
+  "message": "Name is required"
 }
 - OR -
 {
-  message: "Passport is required"
+  "message": "Passport is required"
 }
 - OR -
 {
-  message: "Email is required"
+  "message": "Email is required"
 }
 - OR -
 {
-  message: "Email is not valid"
+  "message": "Email is not valid"
 }
 - OR -
 {
-  message: "Email is already used"
+  "message": "Email is already used"
 }
 - OR -
 {
-  message: "Password is required"
+  "message": "Password is required"
 }
 - OR -
 {
-  message: "Password must be at least 6 characters"
+  "message": "Password must be at least 6 characters"
 }
 - OR -
 {
-  message: "Phone Number is required"
+  "message": "Phone Number is required"
 }
 ```
 
@@ -223,13 +223,13 @@ and `status` of `Active`
 #### `201` - Created
 ```json
 {
-  id: "integer",
-  name: "string",
-  passportNumber: "Staff",
-  role: "string" || Only accepts from the list above,
-  email: "string",
-  phoneNumber: "string",
-  status: "Active"
+  "id": "integer",
+  "name": "string",
+  "passportNumber": "Staff",
+  "role": "string" || Only accepts from the list above,
+  "email": "string",
+  "phoneNumber": "string",
+  "status": "Active"
 }
 ```
   
@@ -237,35 +237,35 @@ and `status` of `Active`
 #### `400` - BadParameter
 ```json
 {
-  message: "Name is required"
+  "message": "Name is required"
 }
 - OR -
 {
-  message: "Role is required"
+  "message": "Role is required"
 }
 - OR -
 {
-  message: "Email is required"
+  "message": "Email is required"
 }
 - OR -
 {
-  message: "Email is not valid"
+  "message": "Email is not valid"
 }
 - OR -
 {
-  message: "Email is already used"
+  "message": "Email is already used"
 }
 - OR -
 {
-  message: "Password is required"
+  "message": "Password is required"
 }
 - OR -
 {
-  message: "Password must be at least 6 characters"
+  "message": "Password must be at least 6 characters"
 }
 - OR -
 {
-  message: "Phone Number is required"
+  "message": "Phone Number is required"
 }
 ```
 
@@ -290,13 +290,13 @@ and `status` of `Active`
 #### `200` - OK
 ```json
 {
-  id: "integer",
-  name: "string",
-  passportNumber: "string",
-  role: |> One of the list of Roles <|,
-  email: "string",
-  phoneNumber: "string",
-  status: |> One of the list of Status <|
+  "id": "integer",
+  "name": "string",
+  "passportNumber": "string",
+  "role": |> One of the list of Roles <|,
+  "email": "string",
+  "phoneNumber": "string",
+  "status": |> One of the list of Status <|
 }
 ```
 
@@ -304,13 +304,13 @@ and `status` of `Active`
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `404` - NotFound
 ```json
 {
-  message: "Can't find user"
+  "message": "Can't find user"
 }
 ```
 
@@ -339,13 +339,13 @@ and `status` of `Active`
 #### `200` - OK
 ```json
 {
-  id: "integer",
-  name: "string",
-  passportNumber: "string",
-  role: |> One of the list of Roles <|,
-  email: "string",
-  phoneNumber: "string",
-  status: |> One of the list of Status <|
+  "id": "integer",
+  "name": "string",
+  "passportNumber": "string",
+  "role": |> One of the list of Roles <|,
+  "email": "string",
+  "phoneNumber": "string",
+  "status": |> One of the list of Status <|
 }
 ```
 
@@ -353,13 +353,13 @@ and `status` of `Active`
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `404` - NotFound
 ```json
 {
-  message: "Can't find user"
+  "message": "Can't find user"
 }
 ```
 
@@ -381,11 +381,11 @@ Note: Only staff with role `admin` can access this
 ```json
 [
   {
-    id: "integer",
-    userId: "integer",
-    updatedBy: "string" || Name of the user,
-    description: "string",
-    createdAt: "dateTime"
+    "id": "integer",
+    "userId": "integer",
+    "updatedBy": "string" || Name of the user,
+    "description": "string",
+    "createdAt": "dateTime"
   },
   ...
 ]
@@ -395,13 +395,13 @@ Note: Only staff with role `admin` can access this
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `403` - Forbidden
 ```json
 {
-  message: "You can't access this"
+  "message": "You can't access this"
 }
 ```
 ---
@@ -426,12 +426,12 @@ Note: Only staff with role `admin` can access this
 #### `200` - OK
 ```json
 {
-  id: "integer",
-  userId: "integer",
-  updatedUser: "name",
-  updatedBy: "string" || Name of the user,
-  description: "string",
-  createdAt: "dateTime"
+  "id": "integer",
+  "userId": "integer",
+  "updatedUser": "name",
+  "updatedBy": "string" || Name of the user,
+  "description": "string",
+  "createdAt": "dateTime"
 }
 ```
 
@@ -439,20 +439,20 @@ Note: Only staff with role `admin` can access this
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `403` - Forbidden
 ```json
 {
-  message: "You can't access this"
+  "message": "You can't access this"
 }
 ```
 
 #### `404` - NotFound
 ```json
 {
-  message: "Can't find user"
+  "message": "Can't find user"
 }
 ```
 
@@ -475,10 +475,10 @@ Note: Only staff with role `admin` can access this
 ```json
 [
   {
-    id: "integer",
-    name: "string",
-    address: "string",
-    type: "Wisma" || "Hotel"
+    "id": "integer",
+    "name": "string",
+    "address": "string",
+    "type": "Wisma" || "Hotel"
   },
   ...
 ]
@@ -503,10 +503,10 @@ Note: Only staff with role `admin` can access this
 #### `200` - OK
 ```json
 {
-  id: "integer",
-  name: "string",
-  address: "string",
-  type: "Wisma" || "Hotel"
+  "id": "integer",
+  "name": "string",
+  "address": "string",
+  "type": "Wisma" || "Hotel"
 }
 ```
 
@@ -514,17 +514,17 @@ Note: Only staff with role `admin` can access this
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `404` - NotFound
 ```json
 {
-  message: "Can't find user"
+  "message": "Can't find user"
 }
 - OR -
 {
-  message: "User is not on any location"
+  "message": "User is not on any location"
 }
 ```
 ---
@@ -551,10 +551,10 @@ note: Only `admins` can create new locations
 #### `201` - OK
 ```json
 {
-  id: "integer",
-  name: "string",
-  address: "string",
-  type: "wisma" || "hotel"
+  "id": "integer",
+  "name": "string",
+  "address": "string",
+  "type": "wisma" || "hotel"
 }
 ```
 
@@ -562,17 +562,17 @@ note: Only `admins` can create new locations
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `400` - Bad Parameter
 ```json
 {
-  message: "Please enter a name for the location"
+  "message": "Please enter a name for the location"
 }
 - OR -
 {
-  message: "Please enter an address for the location"
+  "message": "Please enter an address for the location"
 }
 ```
 ---
@@ -599,11 +599,11 @@ note: only `OfficerAirport` can access this
 #### `201` - OK
 ```json
 {
-  id: "integer",
-  userId: "integer",
-  locationId: "integer",
-  locationType: "Wisma" or "Hotel"
-  roomNumber: "string" || null
+  "id": "integer",
+  "userId": "integer",
+  "locationId": "integer",
+  "locationType": "Wisma" or "Hotel",
+  "roomNumber": "string" || null
 }
 ```
 
@@ -614,13 +614,13 @@ note: only `OfficerAirport` can access this
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `403` - Forbidden
 ```json
 {
-  message: "You can't access this"
+  "message": "You can't access this"
 }
 ```
 
@@ -628,11 +628,11 @@ note: only `OfficerAirport` can access this
 
 ```json
 {
-  message: "User with ID not found"
+  "message": "User with ID not found"
 }
 - OR -
 {
-  message: "Location with ID not found"
+  "message": "Location with ID not found"
 }
 ```
 ---
@@ -662,10 +662,10 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 #### `201` - OK
 ```json
 {
-  id: "integer",
-  userId: "integer",
-  locationId: "integer",
-  roomNumber: "string"
+  "id": "integer",
+  "userId": "integer",
+  "locationId": "integer",
+  "roomNumber": "string"
 }
 ```
 
@@ -673,26 +673,26 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 #### `400` - Bad Parameter
 ```json
 {
-  message: "roomNumber is required"
+  "message": "roomNumber is required"
 }
 ```
 #### `401` - Unauthorized
 ```json
 {
-  message: "Token Invalid"
+  "message": "Token Invalid"
 }
 ```
 #### `403` - Forbidden
 ```json
 {
-  message: "You can't access this"
+  "message": "You can't access this"
 }
 ```
 #### `404` - NotFound
 
 ```json
 {
-  message: "User with ID not found"
+  "message": "User with ID not found"
 }
 ```
 ---
@@ -705,7 +705,7 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 
 ```json
 {
-  message: "Internal Server Error"
+  "message": "Internal Server Error"
 }
 ```
 ---
