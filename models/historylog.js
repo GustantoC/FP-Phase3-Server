@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   HistoryLog.init({
-    UserId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    UpdatedBy: {
+    updatedBy: {
       type: DataTypes.INTEGER,
       allowNull: false,
       references: {
@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    Description: {
+    description: {
       type: DataTypes.STRING,
       allowNull: false,
       validate:{

@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   QuarantineLocation.init({
-    Name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate:{
@@ -26,7 +26,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    Address: {
+    address: {
       type: DataTypes.STRING,
       allowNull: false,
       validate:{
@@ -37,6 +37,10 @@ module.exports = (sequelize, DataTypes) => {
           msg: "Please enter an address for the location"
         }
       }
+    },
+    type: {
+      type: DataTypes.STRING,
+      allowNull: false
     }
   }, {
     hooks:{

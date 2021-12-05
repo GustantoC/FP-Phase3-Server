@@ -7,13 +7,13 @@ module.exports = {
     const salt = bcrypt.genSaltSync(10);
     const hashedPassword = bcrypt.hashSync('admin', salt);
     const userObject = {
-      Name: 'Admin',
-      idNumber: '123456789',
-      Role: 'Admin',
-      Email: 'admin@admin.com',
-      Password: hashedPassword,
+      name: 'Admin',
+      idNumber: '(NIK/PASSPORT)',
+      role: 'Admin',
+      email: 'admin@admin.com',
+      password: hashedPassword,
       phoneNumber: '0712345678',
-      Status: 'Admin',
+      status: 'Admin',
       createdAt: new Date(),
       updatedAt: new Date(),
     };

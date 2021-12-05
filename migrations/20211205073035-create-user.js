@@ -8,23 +8,32 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      Name: {
+      name: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      idNumber: {
+      passportNumber: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      Role: {
+      role: {
+        /**
+        * - Admin
+        * - OfficerAirport
+        * - DriverWisma
+        * - DriverHotel
+        * - OfficerHotel
+        * - OfficerWisma
+        * - HealthOfficial
+         */
         type: Sequelize.STRING,
         allowNull: false
       },
-      Email: {
+      email: {
         type: Sequelize.STRING,
         allowNull: false
       },
-      Password: {
+      password: {
         type: Sequelize.STRING,
         allowNull: false
       },
@@ -32,7 +41,18 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false
       },
-      Status: {
+      status: {
+        /*
+        ArrivalProcedure
+        Interview
+        Interviewed
+        Exit Terminal
+        On route
+        Briefing
+        Quarantine
+        SwabPertama
+        SwabKedua
+         */
         type: Sequelize.STRING,
         allowNull: false
       },

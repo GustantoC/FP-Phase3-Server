@@ -14,7 +14,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   QuarantineDetail.init({
-    UserId: {
+    userId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -31,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: 'CASCADE'
     },
-    LocationId: {
+    locationId: {
       type: DataTypes.INTEGER,
       allowNull: false,
       validate: {
@@ -48,7 +48,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: 'CASCADE'
     },
-    RoomNumber: DataTypes.STRING
+    roomNumber: DataTypes.STRING
   }, {
     hooks: {
       afterCreate: (instance, options) => {

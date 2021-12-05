@@ -15,7 +15,7 @@ module.exports = (sequelize, DataTypes) => {
     }
   };
   User.init({
-    Name: {
+    name: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -27,19 +27,19 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    idNumber: {
+    passportNumber: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: "Passport/NIK is required"
+          msg: "Passport is required"
         },
         notNull: {
-          msg: "Passport/NIK is required"
+          msg: "Passport is required"
         }
       }
     },
-    Role: {
+    role: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -51,18 +51,18 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    Email: {
+    email: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
         notEmpty: {
-          msg: "E-mail is required"
+          msg: "Email is required"
         },
         notNull: {
-          msg: "E-mail is required"
+          msg: "Email is required"
         },
         isEmail: {
-          msg: "E-mail is not valid"
+          msg: "Email is not valid"
         },
         isUnique: function (value, next) {
           User.find({
@@ -71,14 +71,14 @@ module.exports = (sequelize, DataTypes) => {
             }
           }).then(user => {
             if (user) {
-              return next('Email already exists');
+              return next('Email is already used');
             }
             return next();
           })
         }
       }
     },
-    Password: {
+    password: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
@@ -106,7 +106,7 @@ module.exports = (sequelize, DataTypes) => {
         }
       }
     },
-    Status: {
+    status: {
       type: DataTypes.STRING,
       allowNull: false,
       validate: {
