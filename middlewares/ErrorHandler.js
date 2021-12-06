@@ -1,7 +1,7 @@
 function ErrorHandler(err, req, res, next) {
   switch (err.name) {
     case 'SequelizeValidationError':
-      err.message = err.message.split(': ')[1]
+      err.message = err.message.split(',\n')[0].split(': ')[1]
     case 'SequelizeUniqueConstraintError':
     case '400':
       err.message = err.message || 'Bad request'
