@@ -7,24 +7,25 @@
 
 |Type|Path|Description|
 |:-|:-|:-|
-|`POST`|'/login'|Login user|
+|`POST`|'/login'|[Login user](#login-user)|  
+
 #### Users
 
 |Type|Path|Description|
 |:-|:-|:-|
-|`GET`|'/users'|Get all user (can be queried for roles)|
-|`GET`|'/users/:id'|Get detail of user with id `:id`|
-|`POST`|'/users'|Create new user (register)|
-|`PUT`|'/users/:id'|Update status of the user|
+|`GET`|'/users'|[Get all user (can be queried for roles)](#get-all-users)|
+|`GET`|'/users/:id'|[Get detail of user with id `:id`](#get-user)|
+|`POST`|'/users'|[Create new user (register)](#create-user)|
+|`PUT`|'/users/:id'|[Update status of the user](#change-user-status)|
 
 #### Staffs
 
 |Type|Path|Description|
 |:-|:-|:-|
-|`POST`|'/staffs'|Create new Staff|
-|`PUT`|'/staffs/:id'|Change the role of the staff|
+|`POST`|'/staffs'|[Create new Staff](#create-staff)|
+|`PUT`|'/staffs/:id'|[Change the role of the staff](#change-staff-role)|
 
-#### History
+[History](#get-list-of-history)
 
 |Type|Path|Description|
 |:-|:-|:-|
@@ -32,7 +33,7 @@
 |`GET`|'/histories/:userId'|Get history from the userId| 
 
 
-#### Location
+[Location](#get-list-of-locations)
 
 |Type|Path|Description|
 |:-|:-|:-|
@@ -264,6 +265,51 @@ and `status` of `ArrivalProcedure`
 
 ---
 
+# Change User Status
+
+```http
+  PUT /users/:id
+```
+
+|Header|Type|Description|
+|:-|:-|:-|
+|`access_token`|`string`|**Required**. Your access_token|
+
+|Parameter|Type|Description|
+|:-|:-|:-|
+| `id`| `intger`|**Required**. Id of User to change|
+
+
+### Response 
+#### `200` - OK
+```json
+{
+  "id": "integer",
+  "name": "string",
+  "passportNumber": "string",
+  "role": |> One of the list of Roles <|,
+  "email": "string",
+  "phoneNumber": "string",
+  "status": |> One of the list of Status <|
+}
+```
+
+### Error
+#### `401` - Unauthorized
+```json
+{
+  "message": "Token Invalid"
+}
+```
+#### `404` - NotFound
+```json
+{
+  "message": "Can't find user"
+}
+```
+
+---
+
 # Create Staff
 
 ```http
@@ -335,51 +381,6 @@ and `status` of `Active`
 - OR -
 {
   "message": "Phone Number is required"
-}
-```
-
----
-
-# Change User Status
-
-```http
-  PUT /users/:id
-```
-
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
-
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `id`| `intger`|**Required**. Id of User to change|
-
-
-### Response 
-#### `200` - OK
-```json
-{
-  "id": "integer",
-  "name": "string",
-  "passportNumber": "string",
-  "role": |> One of the list of Roles <|,
-  "email": "string",
-  "phoneNumber": "string",
-  "status": |> One of the list of Status <|
-}
-```
-
-### Error
-#### `401` - Unauthorized
-```json
-{
-  "message": "Token Invalid"
-}
-```
-#### `404` - NotFound
-```json
-{
-  "message": "Can't find user"
 }
 ```
 
