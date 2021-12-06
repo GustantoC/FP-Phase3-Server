@@ -72,8 +72,8 @@
 ## 
 ##
 
-# Login User
-
+# Login User  
+[Back to list of API](#list-of-apis)
 ```http
   POST /login
 ```
@@ -115,6 +115,7 @@
 
 # Get all users
 
+[Back to list of API](#list-of-apis)
 ```http
   GET /users
 ```
@@ -157,6 +158,7 @@
 
 # Get user
 
+[Back to list of API](#list-of-apis)
 ```http
   GET /users/:id
 ```
@@ -196,6 +198,7 @@
 
 # Create User
 
+[Back to list of API](#list-of-apis)
 ```http
   POST /users
 ```
@@ -266,6 +269,7 @@ and `status` of `ArrivalProcedure`
 
 # Change User Status
 
+[Back to list of API](#list-of-apis)
 ```http
   PUT /users/:id
 ```
@@ -311,6 +315,7 @@ and `status` of `ArrivalProcedure`
 
 # Create Staff
 
+[Back to list of API](#list-of-apis)
 ```http
   POST /staffs
 ```
@@ -387,6 +392,7 @@ and `status` of `Active`
 
 # Change Staff Role
 
+[Back to list of API](#list-of-apis)
 ```http
   PUT /staff/:id
 ```
@@ -436,6 +442,7 @@ and `status` of `Active`
 
 # Get list of history
 
+[Back to list of API](#list-of-apis)
 ```http
   GET /histories
 ```
@@ -477,6 +484,7 @@ Note: Only staff with role `admin` can access this
 
 # Get history by userId
 
+[Back to list of API](#list-of-apis)
 ```http
   GET /histories/:userId
 ```
@@ -530,6 +538,7 @@ Note: Only staff with role `admin` can access this
 
 # Get list of locations
 
+[Back to list of API](#list-of-apis)
 ```http
   GET /locations
 ```
@@ -556,6 +565,7 @@ Note: Only staff with role `admin` can access this
 
 # Get location user of userId
 
+[Back to list of API](#list-of-apis)
 ```http
   GET /locations/:userId
 ```
@@ -600,6 +610,7 @@ Note: Only staff with role `admin` can access this
 
 # Create new location
 
+[Back to list of API](#list-of-apis)
 ```http
   POST /locations
 ```
@@ -648,6 +659,7 @@ note: Only `admins` can create new locations
 
 # Create QuarantineDetail for User
 
+[Back to list of API](#list-of-apis)
 ```http
   POST /quarantines/:userId/:locationId
 ```
@@ -707,6 +719,7 @@ note: only `OfficerAirport` can access this
 
 # Update Quarantine Detail for User
 
+[Back to list of API](#list-of-apis)
 ```http
   PUT /quarantines/:userId
 ```
@@ -767,6 +780,7 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 ---
 
 
+[Back to list of API](#list-of-apis)
 
 ### Global Error
 
