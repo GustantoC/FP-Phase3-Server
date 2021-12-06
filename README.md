@@ -25,29 +25,28 @@
 |`POST`|'/staffs'|[Create new Staff](#create-staff)|
 |`PUT`|'/staffs/:id'|[Change the role of the staff](#change-staff-role)|
 
-[History](#get-list-of-history)
+#### History
+|Type|Path|Description|
+|:-|:-|:-|
+|`GET`|'/histories'|[Get all history](#get-list-of-history)|
+|`GET`|'/histories/:userId'|[Get history from the userId](#get-history-by-userid)| 
+
+
+#### Location
 
 |Type|Path|Description|
 |:-|:-|:-|
-|`GET`|'/histories'|Get all history|
-|`GET`|'/histories/:userId'|Get history from the userId| 
-
-
-[Location](#get-list-of-locations)
-
-|Type|Path|Description|
-|:-|:-|:-|
-|`GET`|'/locations'|Get all locations|
-|`GET`|'/locations/:userId'|Get the detail location of `userId`|
-|`POST`|'/locations'| Admin adding new Location of hotel or wisma | 
+|`GET`|'/locations'|[Get all locations](#get-list-of-locations)|
+|`GET`|'/locations/:userId'|[Get the detail location of `userId`](#get-location-user-of-userid)|
+|`POST`|'/locations'| [Adding new location (Admin Only)](#create-new-location)| 
 
 
 ### Quarantine
 
 |Type|Path|Description|
 |:-|:-|:-|
-|`POST`|'/quarantines/:userId/:locationId'| Creating a Quarantine Detail for the user |
-|`PUT`|'/quarantines/:userId'| Changing QuarantineDetail of userId | 
+|`POST`|'/quarantines/:userId/:locationId'| [Creating a Quarantine Detail for the user](#create-quarantinedetail-for-user) |
+|`PUT`|'/quarantines/:userId'| [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user) | 
 
 ### List of Roles
 
