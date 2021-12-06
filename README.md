@@ -8,7 +8,7 @@
 |Type|Path|Description|
 |:-|:-|:-|
 |`POST`|'/login'|Login user|
-#### Users/Staff
+#### Users
 
 |Type|Path|Description|
 |:-|:-|:-|
@@ -16,6 +16,11 @@
 |`GET`|'/users/:id'|Get detail of user with id `:id`|
 |`POST`|'/users'|Create new user (register)|
 |`PUT`|'/users/:id'|Update status of the user|
+
+#### Staffs
+
+|Type|Path|Description|
+|:-|:-|:-|
 |`POST`|'/staffs'|Create new Staff|
 |`PUT`|'/staffs/:id'|Change the role of the staff|
 
@@ -34,8 +39,14 @@
 |`GET`|'/locations'|Get all locations|
 |`GET`|'/locations/:userId'|Get the detail location of `userId`|
 |`POST`|'/locations'| Admin adding new Location of hotel or wisma | 
-|`POST`|'/locations/:userId/:locationId'| Adding new Location for User |
-|`PUT`|'/locations/:userId'| Changing room number of currentUser | 
+
+
+### Quarantine
+
+|Type|Path|Description|
+|:-|:-|:-|
+|`POST`|'/quarantines/:userId/:locationId'| Creating a Quarantine Detail for the user |
+|`PUT`|'/quarantines/:userId'| Changing QuarantineDetail of userId | 
 
 ### List of Roles
 
@@ -624,10 +635,10 @@ note: Only `admins` can create new locations
 ```
 ---
 
-# Create location for User
+# Create QuarantineDetail for User
 
 ```http
-  POST /locations/:userId/:locationId
+  POST /quarantines/:userId/:locationId
 ```
 
 |Header|Type|Description|
@@ -649,8 +660,7 @@ note: only `OfficerAirport` can access this
   "id": "integer",
   "userId": "integer",
   "locationId": "integer",
-  "locationType": "Wisma" or "Hotel",
-  "roomNumber": "string" || null
+  "roomNumber": null
 }
 ```
 
@@ -684,11 +694,12 @@ note: only `OfficerAirport` can access this
 ```
 ---
 
-# Update location for User
+# Update Quarantine Detail for User
 
 ```http
-  PUT /locations/:userId
+  PUT /quarantines/:userId
 ```
+
 
 |Header|Type|Description|
 |:-|:-|:-|
@@ -703,26 +714,27 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 
 |Body|Type|Description|
 |:-|:-|:-|
-| `roomNumber` | `string` | **Required**. Room Number to add |
+| `roomNumber` | `string` |  Room Number to add |
+| `totalDays` | `integer` |  Total days needed to be quarantined |
+| `tripOrigin` | `string` |  Trip Origin |
+| `tripDestination` | `string` | Trip Destination  |
 
 ### Response
-#### `201` - OK
+#### `200` - OK
 ```json
 {
   "id": "integer",
   "userId": "integer",
   "locationId": "integer",
-  "roomNumber": "string"
+  "roomNumber": "string",
+  "totalDays": "integer",
+  "tripOrigin": "string",
+  "tripDestination": "string",
+  "isQuarantined": "boolean"
 }
 ```
 
 ### Error
-#### `400` - Bad Parameter
-```json
-{
-  "message": "roomNumber is required"
-}
-```
 #### `401` - Unauthorized
 ```json
 {
@@ -736,7 +748,6 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 }
 ```
 #### `404` - NotFound
-
 ```json
 {
   "message": "User with ID not found"
