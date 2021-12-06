@@ -110,7 +110,6 @@
 }
 ```
 
-```
 
 ---
 
@@ -144,6 +143,14 @@
   ...
 ]
 ```
+
+#### `404` - Not Found
+```json
+{
+  "message":
+}
+```
+
 ---
 
 ---
@@ -300,6 +307,10 @@ and `status` of `Active`
 - OR -
 {
   "message": "Role is required"
+}
+- OR -
+{
+  "message": "Role is not accepted"
 }
 - OR -
 {

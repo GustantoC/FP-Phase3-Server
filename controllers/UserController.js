@@ -5,19 +5,62 @@ const { User } = require('../models');
 class UserController {
   //GET All User ()
   static async getAllUsers(req, res, next) {
-    //Query role
+    try {
+      let { role } = req.query;
+      let options = {};
+      if (role) options = { role: role }
+      const response = await User.findAll({
+        where: options,
+        attributes: {
+          exclude: ['password', 'createdAt', 'updatedAt']
+        }
+      })
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
   //GET User by ID
   static async getUserById(req, res, next) {
-
+    try {
+      let { id } = req.params;
+      const response = await User.findByPk(id, {
+        attributes: {
+          exclude: ['password', 'createdAt', 'updatedAt']
+        }
+      });
+      if(!response) {
+        throw {name:'404', message: 'Can\'t find user'}
+      }
+      res.status(200).json(response);
+    } catch (error) {
+      next(error);
+    }
   }
 
   //POST User
   static async createUser(req, res, next) {
     try {
       let { name, passportNumber, email, password, phoneNumber } = req.body;
-      
+      const response = await User.create({
+        name: name,
+        passportNumber: passportNumber,
+        role: 'User',
+        email: email,
+        password: password,
+        phoneNumber: phoneNumber,
+        status: 'ArrivalProcedure'
+      });
+      res.status(200).json({
+        id: response.id,
+        name: response.name,
+        passportNumber: response.passportNumber,
+        role: response.role,
+        email: response.email,
+        phoneNumber: response.phoneNumber,
+        status: response.status
+      })
     } catch (error) {
       next(error);
     }
@@ -37,9 +80,32 @@ class UserController {
   static async createStaff(req, res, next) {
     //TODO: Ini function untuk membuat Staff baru
     try {
-
-    } catch (err) {
-      next(err);
+      const acceptedRoles = ['Admin', 'OfficerAirport', 'DriverWisma', 'DriverHotel', 'OfficerHotel', 'OfficerWisma', 'HealthOfficial'];
+      const { name, role, email, password, phoneNumber } = req.body;
+      //role has to be included in acceptedRoles
+      if (!acceptedRoles.includes(role)) {
+        throw { name: '400', message: 'Role is not accepted' };
+      }
+      const response = await User.create({
+        name: name,
+        passportNumber: "Staff",
+        role: role,
+        email: email,
+        password: password,
+        phoneNumber: phoneNumber,
+        status: 'Active'
+      });
+      res.status(200).json({
+        id: response.id,
+        name: response.name,
+        passportNumber: response.passportNumber,
+        role: response.role,
+        email: response.email,
+        phoneNumber: response.phoneNumber,
+        status: response.status
+      })
+    } catch (error) {
+      next(error);
     }
   }
 
@@ -83,8 +149,8 @@ class UserController {
         });
       }
     }
-    catch (err) {
-      next(err);
+    catch (error) {
+      next(error);
     }
   }
 
@@ -103,9 +169,8 @@ class UserController {
       res.status(200).json({
         message: 'Created admin@admin.com with password *****'
       })
-    } catch (err) {
-      console.log(err)
-      next(err)
+    } catch (error) {
+      next(error)
     }
   }
 }

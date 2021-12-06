@@ -79,7 +79,7 @@ module.exports = (sequelize, DataTypes) => {
         notNull: {
           msg: "Password is required"
         },
-        min: {
+        len: {
           args: [6],
           msg: "Password must be at least 6 characters"
         }
