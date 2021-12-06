@@ -54,6 +54,9 @@ module.exports = (sequelize, DataTypes) => {
     email: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: {
+        msg: "Email is already used"
+      },
       validate: {
         notEmpty: {
           msg: "Email is required"
@@ -63,18 +66,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         isEmail: {
           msg: "Email is not valid"
-        },
-        isUnique: function (value, next) {
-          User.find({
-            where: {
-              Email: value
-            }
-          }).then(user => {
-            if (user) {
-              return next('Email is already used');
-            }
-            return next();
-          })
         }
       }
     },
@@ -121,7 +112,7 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     hooks:{
       beforeCreate: (instance, options) => {
-        instance.Password = PasswordHelper.hashPassword(instance.Password);
+        instance.password = PasswordHelper.hashPassword(instance.password);
       },
       afterCreate: (instance, options) => {
         // let historyObj = {

@@ -33,7 +33,7 @@ class UserController {
   static async createStaff(req, res, next) {
     //TODO: Ini function untuk membuat Staff baru
     try {
-      
+
     } catch (err) {
       next(err);
     }
@@ -54,10 +54,10 @@ class UserController {
   static async Login(req, res, next) {
     try {
       const { email, password } = req.body;
-      if(!email){
+      if (!email) {
         throw { name: '400', message: 'Email is required' };
       }
-      if(!password){
+      if (!password) {
         throw { name: '400', message: 'Password is required' };
       }
       const user = await User.findOne({
@@ -65,7 +65,7 @@ class UserController {
           email: email
         }
       });
-      if (!user || user.password !== PasswordHelper.comparePassword(password, user.password)) {
+      if (!user || !PasswordHelper.comparePassword(password, user.password)) {
         throw { name: '401', message: 'Invalid email or password' };
       }
       else {
@@ -81,6 +81,27 @@ class UserController {
     }
     catch (err) {
       next(err);
+    }
+  }
+
+  //POST /regisAdmin
+  static async regisAdmin(req, res, next) {
+    try {
+      const resposne = await User.create({
+        name: "Admin",
+        passportNumber: "ADMIN-12345",
+        role: 'Admin',
+        email: "admin@admin.com",
+        password: "admin",
+        phoneNumber: "081234567890",
+        status: "Active"
+      });
+      res.status(200).json({
+        message: 'Created admin@admin.com with password *****'
+      })
+    } catch (err) {
+      console.log(err)
+      next(err)
     }
   }
 }
