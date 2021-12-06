@@ -3,6 +3,11 @@
 
 ## List of APIs
 
+#### Login
+
+|Type|Path|Description|
+|:-|:-|:-|
+|`POST`|'/login'|Login user|
 #### Users/Staff
 
 |Type|Path|Description|
@@ -56,6 +61,47 @@
 ## 
 ##
 
+# Login User
+
+```http
+  POST /login
+```
+
+|Body|Type|Description|
+|:-|:-|:-|
+| `email` | `string` | **Required**. Login User |
+| `password` | `string` | **Required**. Login email |
+
+### Response
+#### `200` - OK
+```json
+[
+  {
+    "access_token": "string"
+  }
+]
+
+### Error
+#### `400` - BadParameter
+```json
+{
+  "message": "Email is required"
+}
+- OR -
+{
+  "message": "Password is required"
+}
+```
+#### `401` - Unauthorized
+```json
+{
+  "message": "Invalid email or password"
+}
+```
+
+```
+
+---
 
 # Get all users
 
@@ -87,6 +133,7 @@
   ...
 ]
 ```
+---
 
 ---
 
