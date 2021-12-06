@@ -14,6 +14,15 @@ class UserController {
   }
 
   //POST User
+  static async createUser(req, res, next) {
+    try {
+      let { name, passportNumber, email, password, phoneNumber } = req.body;
+      
+    } catch (error) {
+      next(error);
+    }
+  }
+
   /**
    * List of roles:
    * - Admin
@@ -25,11 +34,6 @@ class UserController {
    * - HealthOfficial
    * - User
    */
-  static async createUser(req, res, next) {
-    //TODO: Ini function untuk membuat user baru 
-
-  }
-
   static async createStaff(req, res, next) {
     //TODO: Ini function untuk membuat Staff baru
     try {

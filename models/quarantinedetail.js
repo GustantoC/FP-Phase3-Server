@@ -48,7 +48,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       onDelete: 'CASCADE'
     },
-    roomNumber: DataTypes.STRING
+    roomNumber: DataTypes.STRING,
+    totalDays: DataTypes.INTEGER,
+    tripOrigin: DataTypes.STRING,
+    tripDestination: DataTypes.STRING,
+    isQuarantined: DataTypes.BOOLEAN,
   }, {
     hooks: {
       afterCreate: (instance, options) => {
