@@ -20,6 +20,11 @@ class LocationController {
   static async getUserLocation(req, res, next) {
     
   }
+
+  //GET All location
+  static async getAllLocations(req, res, next) {
+
+  }
 }
 
 module.exports = LocationController
