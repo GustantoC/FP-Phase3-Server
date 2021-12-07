@@ -56,6 +56,7 @@
 - DriverHotel
 - OfficerHotel
 - OfficerWisma
+- HealthOfficial
 - User
 
 ### List of User status 
@@ -290,7 +291,7 @@ and `status` of `ArrivalProcedure`
   "id": "integer",
   "name": "string",
   "passportNumber": "string",
-  "role": |> One of the list of Roles <|,
+  "role": "User",
   "email": "string",
   "phoneNumber": "string",
   "status": |> One of the list of Status <|
@@ -302,6 +303,12 @@ and `status` of `ArrivalProcedure`
 ```json
 {
   "message": "Token Invalid"
+}
+```
+#### `403` - Forbidden
+```json
+{
+  "message": "You can't change user status"
 }
 ```
 #### `404` - NotFound
@@ -394,7 +401,7 @@ and `status` of `Active`
 
 [Back to list of API](#list-of-apis)
 ```http
-  PUT /staff/:id
+  PUT /staffs/:id
 ```
 
 |Header|Type|Description|
@@ -416,15 +423,23 @@ and `status` of `Active`
 {
   "id": "integer",
   "name": "string",
-  "passportNumber": "string",
+  "passportNumber": "Staff",
   "role": |> One of the list of Roles <|,
   "email": "string",
   "phoneNumber": "string",
-  "status": |> One of the list of Status <|
+  "status": "Active"
 }
 ```
 
 ### Error
+
+#### `400` - Bad Parameter
+```json
+{
+  "message": "Role is not accepted"
+}
+```
+
 #### `401` - Unauthorized
 ```json
 {
