@@ -744,7 +744,7 @@ note: only `OfficerAirport` can access this
 |:-|:-|:-|
 |`access_token`|`string`|**Required**. Your access_token|  
 
-note: only `OfficerHotel` or `OfficerWisma` can access this
+note: only `Officer` can access this
 
 
 |Parameter|Type|Description|
@@ -789,7 +789,7 @@ note: only `OfficerHotel` or `OfficerWisma` can access this
 #### `404` - NotFound
 ```json
 {
-  "message": "User with ID not found"
+  "message": "Can't find User with ID in quarantine"
 }
 ```
 ---

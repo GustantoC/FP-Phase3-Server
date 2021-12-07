@@ -118,9 +118,8 @@ class UserController {
     //TODO: Ini fucntion yang ganti status user berdasarkan yang ganti dan status sekarang
     try {
       let { id } = req.params;
-
       const user = await User.findByPk(id);
-      console.log(user.role,"<<<<")
+
       if (!user || user.role !== "User") {
         throw { name: '404', message: 'Can\'t find user' };
       }
@@ -153,7 +152,6 @@ class UserController {
 
   //PUT Role Staff
   static async changeStaffRole(req, res, next) {
-    //TODO: Ini fucntion yang ganti role staff 
     try {
       let { role } = req.body;
       let { id } = req.params;
