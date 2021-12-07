@@ -1,4 +1,4 @@
-const { QuarantineLocation, QuarantineDetail } = require('../models')
+const { QuarantineLocation, QuarantineDetail, User } = require('../models')
 
 
 class LocationController {
@@ -28,7 +28,38 @@ class LocationController {
 
   //GET User location detail untuk user
   static async getUserLocation(req, res, next) {
-
+    try {
+      let { userId } = req.params
+      userId = parseInt(userId)
+      const checkUser = await User.findByPk(userId)
+      if(!checkUser){
+        throw { name: '404', message: 'User not found' }
+      }
+      const response = await QuarantineLocation.findAll({
+        attributes: {
+          exclude: ['createdAt', 'updatedAt']
+        },
+        include: [{
+          model: QuarantineDetail,
+          where: {
+            userId: userId,
+            isQuarantined: false
+          }
+        }]
+      })
+      if(response.length === 0){
+        throw { name: '404', message: 'User is not on any location' }
+      }
+      res.status(200).json({
+        id: response[0].id,
+        name: response[0].name,
+        address: response[0].address,
+        type: response[0].type
+      })
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
   }
 
   //GET All location
