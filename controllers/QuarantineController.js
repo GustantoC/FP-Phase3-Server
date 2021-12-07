@@ -40,7 +40,7 @@ class QuarantineController {
     try {
       let { roomNumber, totalDays, tripOrigin, tripDestination } = req.body
       let { userId } = req.params
-      //Ambil yang isQuarantined = false
+
       const currentQuarantineDetail = await QuarantineDetail.findOne({
         where: {
           userId,
@@ -50,7 +50,6 @@ class QuarantineController {
       if (!currentQuarantineDetail) {
         throw { name: '404', message: `Can't find User with ID in quarantine` }
       }
-      //Update
       const response = await QuarantineDetail.update({
         roomNumber,
         totalDays,
@@ -64,7 +63,6 @@ class QuarantineController {
         returning: true,
         individualHooks: true
       })
-      console.log(response)
       res.status(200).json({
         id: response[1][0].id,
         userId: response[1][0].userId,
@@ -77,7 +75,6 @@ class QuarantineController {
       })
 
     } catch (error) {
-      console.log(error)
       next(error)
     }
 
