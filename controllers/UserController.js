@@ -1,6 +1,6 @@
-const PasswordHelper = require('../helpers/PasswordHelper');
-const TokenHelper = require('../helpers/TokenHelper');
-const { User } = require('../models');
+const PasswordHelper = require("../helpers/PasswordHelper");
+const TokenHelper = require("../helpers/TokenHelper");
+const { User } = require("../models");
 
 class UserController {
   //GET All User ()
@@ -8,15 +8,15 @@ class UserController {
     try {
       let { role } = req.query;
       let options = {};
-      if (role) options = { role: role }
+      if (role) options = { role: role };
       const response = await User.findAll({
         where: options,
         attributes: {
-          exclude: ['password', 'createdAt', 'updatedAt']
-        }
-      })
-      if(response.length === 0) {
-        throw {name:'404', message: 'Can\'t find user'}
+          exclude: ["password", "createdAt", "updatedAt"],
+        },
+      });
+      if (response.length === 0) {
+        throw { name: "404", message: "Can't find user" };
       }
       res.status(200).json(response);
     } catch (error) {
@@ -30,11 +30,11 @@ class UserController {
       let { id } = req.params;
       const response = await User.findByPk(id, {
         attributes: {
-          exclude: ['password', 'createdAt', 'updatedAt']
-        }
+          exclude: ["password", "createdAt", "updatedAt"],
+        },
       });
-      if(!response) {
-        throw {name:'404', message: 'Can\'t find user'}
+      if (!response) {
+        throw { name: "404", message: "Can't find user" };
       }
       res.status(200).json(response);
     } catch (error) {
@@ -49,11 +49,11 @@ class UserController {
       const response = await User.create({
         name: name,
         passportNumber: passportNumber,
-        role: 'User',
+        role: "User",
         email: email,
         password: password,
         phoneNumber: phoneNumber,
-        status: 'ArrivalProcedure'
+        status: "ArrivalProcedure",
       });
       res.status(200).json({
         id: response.id,
@@ -62,8 +62,8 @@ class UserController {
         role: response.role,
         email: response.email,
         phoneNumber: response.phoneNumber,
-        status: response.status
-      })
+        status: response.status,
+      });
     } catch (error) {
       next(error);
     }
@@ -83,11 +83,19 @@ class UserController {
   static async createStaff(req, res, next) {
     //TODO: Ini function untuk membuat Staff baru
     try {
-      const acceptedRoles = ['Admin', 'OfficerAirport', 'DriverWisma', 'DriverHotel', 'OfficerHotel', 'OfficerWisma', 'HealthOfficial'];
+      const acceptedRoles = [
+        "Admin",
+        "OfficerAirport",
+        "DriverWisma",
+        "DriverHotel",
+        "OfficerHotel",
+        "OfficerWisma",
+        "HealthOfficial",
+      ];
       const { name, role, email, password, phoneNumber } = req.body;
       //role has to be included in acceptedRoles
       if (!acceptedRoles.includes(role)) {
-        throw { name: '400', message: 'Role is not accepted' };
+        throw { name: "400", message: "Role is not accepted" };
       }
       const response = await User.create({
         name: name,
@@ -96,7 +104,7 @@ class UserController {
         email: email,
         password: password,
         phoneNumber: phoneNumber,
-        status: 'Active'
+        status: "Active",
       });
       res.status(200).json({
         id: response.id,
@@ -105,8 +113,8 @@ class UserController {
         role: response.role,
         email: response.email,
         phoneNumber: response.phoneNumber,
-        status: response.status
-      })
+        status: response.status,
+      });
     } catch (error) {
       next(error);
     }
@@ -117,10 +125,9 @@ class UserController {
     //TODO: Ini fucntion yang ganti status user berdasarkan yang ganti dan status sekarang
   }
 
-
   //PUT Role Staff
   static async changeStaffRole(req, res, next) {
-    //TODO: Ini fucntion yang ganti role staff 
+    //TODO: Ini fucntion yang ganti role staff
   }
 
   //POST /login
@@ -128,31 +135,29 @@ class UserController {
     try {
       const { email, password } = req.body;
       if (!email) {
-        throw { name: '400', message: 'Email is required' };
+        throw { name: "400", message: "Email is required" };
       }
       if (!password) {
-        throw { name: '400', message: 'Password is required' };
+        throw { name: "400", message: "Password is required" };
       }
       const user = await User.findOne({
         where: {
-          email: email
-        }
+          email: email,
+        },
       });
       if (!user || !PasswordHelper.comparePassword(password, user.password)) {
-        throw { name: '401', message: 'Invalid email or password' };
-      }
-      else {
+        throw { name: "401", message: "Invalid email or password" };
+      } else {
         let token = TokenHelper.signPayload({
           id: user.id,
           email: user.email,
           role: user.role,
-        })
+        });
         res.status(200).json({
-          access_token: token
+          access_token: token,
         });
       }
-    }
-    catch (error) {
+    } catch (error) {
       next(error);
     }
   }
@@ -163,20 +168,19 @@ class UserController {
       const resposne = await User.create({
         name: "Admin",
         passportNumber: "ADMIN-12345",
-        role: 'Admin',
+        role: "Admin",
         email: "admin@admin.com",
-        password: "admin",
+        password: "adminn",
         phoneNumber: "081234567890",
-        status: "Active"
+        status: "Active",
       });
-      res.status(200).json({
-        message: 'Created admin@admin.com with password *****'
-      })
+      res.status(201).json({
+        message: "Created admin@admin.com with password *****",
+      });
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
 }
-
 
 module.exports = UserController;
