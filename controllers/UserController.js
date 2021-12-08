@@ -57,7 +57,7 @@ class UserController {
         phoneNumber: phoneNumber,
         status: "ArrivalProcedure",
       });
-      res.status(200).json({
+      res.status(201).json({
         id: response.id,
         name: response.name,
         passportNumber: response.passportNumber,

@@ -1,12 +1,12 @@
-const router = require('express').Router();
-const UserRouter = require('./UserRouter')
-const StaffRouter = require('./StaffRouter')
-const HistoryRouter = require('./HistoryRouter')
-const LocationRouter = require('./LocationRouter')
-const QuarantineRouter = require('./QuarantineRouter')
-const Authentication = require('../middlewares/Authentication')
-const ErrorHandler = require('../middlewares/ErrorHandler')
-const UserController = require('../controllers/UserController')
+const router = require("express").Router();
+const UserRouter = require("./UserRouter");
+const StaffRouter = require("./StaffRouter");
+const HistoryRouter = require("./HistoryRouter");
+const LocationRouter = require("./LocationRouter");
+const QuarantineRouter = require("./QuarantineRouter");
+const Authentication = require("../middlewares/Authentication");
+const ErrorHandler = require("../middlewares/ErrorHandler");
+const UserController = require("../controllers/UserController");
 
 router.get('/', (_, res) => {
   res.json({ message: 'Welcome to the API' })
@@ -22,4 +22,4 @@ router.use('/locations', LocationRouter)
 router.use('/quarantines', QuarantineRouter)
 router.use(ErrorHandler)
 
-module.exports = router
+module.exports = router;
