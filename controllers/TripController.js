@@ -1,6 +1,32 @@
-const { QuarantineDetail } = require('../models');
+const { QuarantineDetail, User } = require('../models');
 
 class TripController {
+  static async getAllTrips(req, res, next){
+    try {
+      if(req.user.role !== 'User'){
+        throw { name: '403', message: 'You are not allowed to get trips' };
+      }
+      const userData = await User.findByPk(req.user.id);
+      let trips = await QuarantineDetail.findAll({
+        where: {
+          userId: req.user.id
+        }
+      });
+      trips = trips.map(trip => {
+        return {
+          id: userData.id,
+          name: userData.name,
+          tripOrigin: trip.tripOrigin,
+          tripDestination: trip.tripDestination,
+          startedAt: trip.createdAt,
+        }
+      });
+      res.status(200).json(trips);
+    } catch (error) {
+      next(error);
+    }
+  }
+
   static async createTrip(req, res, next){
     try {
       let { tripOrigin, tripDestination } = req.body;

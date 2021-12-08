@@ -21,6 +21,7 @@
 
 |Type|Path|Description|
 |:-|:-|:-|
+|`GET`|'/trips'|[Get all trip](#get-trips)|
 |`POST`|'/trips'|[Create New Trip](#create-trips)|
 #### Staffs
 
@@ -323,6 +324,40 @@ and `status` of `ArrivalProcedure`
 ```
 
 ---
+# GET Trips
+
+[Back to list of API](#list-of-apis)
+```http
+  GET /trips
+```
+
+|Header|Type|Description|
+|:-|:-|:-|
+|`access_token`|`string`|**Required**. Your access_token|  
+
+Note : Getting the trips is based on the access_token
+
+### Returns
+#### `200` - Created
+```json
+{
+  "id": "integer", //User Id
+  "name": "string", //User Name
+  "tripOrigin": "string",
+  "tripDestination": "string",
+  "createdAt": "date"
+}
+```
+### Error
+#### `403` - Forbidden
+```json
+{
+  "message": "You are not an user"
+}
+```
+
+---
+
 # Create Trips
 
 [Back to list of API](#list-of-apis)
