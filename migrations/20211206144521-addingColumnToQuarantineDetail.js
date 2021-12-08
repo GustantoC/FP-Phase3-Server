@@ -3,8 +3,8 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.addColumn('QuarantineDetails', 'totalDays', {
-        type: Sequelize.INTEGER,
+      queryInterface.addColumn('QuarantineDetails', 'quarantineUntil', {
+        type: Sequelize.DATE,
       }),
       queryInterface.addColumn('QuarantineDetails', 'tripOrigin', {
         type: Sequelize.STRING,
@@ -26,7 +26,7 @@ module.exports = {
 
   down: async (queryInterface, Sequelize) => {
     return Promise.all([
-      queryInterface.removeColumn('QuarantineDetails', 'totalDays', {}),
+      queryInterface.removeColumn('QuarantineDetails', 'quarantineUntil', {}),
       queryInterface.removeColumn('QuarantineDetails', 'tripOrigin', {}),
       queryInterface.removeColumn('QuarantineDetails', 'tripDestination', {}),
       queryInterface.removeColumn('QuarantineDetails', 'isQuarantined', {}),

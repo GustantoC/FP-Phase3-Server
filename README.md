@@ -17,7 +17,11 @@
 |`GET`|'/users/:id'|[Get detail of user with id `:id`](#get-user)|
 |`POST`|'/users'|[Create new user (register)](#create-user)|
 |`PUT`|'/users/:id'|[Update status of the user](#change-user-status)|
+### Trips
 
+|Type|Path|Description|
+|:-|:-|:-|
+|`POST`|'/trips'|[Create New Trip](#create-trips)|
 #### Staffs
 
 |Type|Path|Description|
@@ -319,7 +323,49 @@ and `status` of `ArrivalProcedure`
 ```
 
 ---
+# Create Trips
 
+[Back to list of API](#list-of-apis)
+```http
+  POST /trips
+```
+
+|Header|Type|Description|
+|:-|:-|:-|
+|`access_token`|`string`|**Required**. Your access_token|  
+
+Note : creating new user trips based on the current access token
+
+
+|Body|Type|Description|
+|:-|:-|:-|
+| `tripOrigin` | `string` | **Required**. Trip Origin |
+| `tripDestination` | `string` | **Required**. Trip destination |
+### Returns
+#### `201` - Created
+```json
+{
+  "id": "integer",
+  "tripOrigin": "string",
+  "tripDestination": "string"
+}
+```
+### Error
+#### `400` - Bad Parameter
+```json
+{
+  "message": "Please provide origin and destination"
+}
+```
+
+#### `403` - Forbidden
+```json
+{
+  "message": "You are not an user"
+}
+```
+
+---
 # Create Staff
 
 [Back to list of API](#list-of-apis)
@@ -754,7 +800,7 @@ note: only `Officer` can access this
 |Body|Type|Description|
 |:-|:-|:-|
 | `roomNumber` | `string` |  Room Number to add |
-| `totalDays` | `integer` |  Total days needed to be quarantined |
+| `quarantineUntil` | `date` |  Quarantine date ends |
 | `tripOrigin` | `string` |  Trip Origin |
 | `tripDestination` | `string` | Trip Destination  |
 
@@ -766,7 +812,7 @@ note: only `Officer` can access this
   "userId": "integer",
   "locationId": "integer",
   "roomNumber": "string",
-  "totalDays": "integer",
+  "quarantineUntil": "date",
   "tripOrigin": "string",
   "tripDestination": "string",
   "isQuarantined": "boolean"

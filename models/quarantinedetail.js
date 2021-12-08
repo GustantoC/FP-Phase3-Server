@@ -35,23 +35,13 @@ module.exports = (sequelize, DataTypes) => {
     },
     locationId: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-      validate: {
-        notNull: {
-          msg: 'LocationId is required'
-        },
-        notEmpty: {
-          msg: 'LocationId is required'
-        }
-      },
       references: {
         model: 'QuarantineLocations',
         key: 'id'
-      },
-      onDelete: 'CASCADE'
+      }
     },
     roomNumber: DataTypes.STRING,
-    totalDays: DataTypes.INTEGER,
+    quarantineUntil: DataTypes.DATE,
     tripOrigin: DataTypes.STRING,
     tripDestination: DataTypes.STRING,
     isQuarantined: DataTypes.BOOLEAN,

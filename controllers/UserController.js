@@ -1,7 +1,7 @@
 const PasswordHelper = require('../helpers/PasswordHelper');
 const TokenHelper = require('../helpers/TokenHelper');
 const acceptedRoles = require('../helpers/AcceptedStaffRoles');
-const { User } = require('../models');
+const { User, QuarantineDetail } = require('../models');
 const progressStatus = require('../helpers/ProgressStatus');
 
 class UserController {
@@ -115,7 +115,6 @@ class UserController {
 
   //PUT Status User
   static async changeStatus(req, res, next) {
-    //TODO: Ini fucntion yang ganti status user berdasarkan yang ganti dan status sekarang
     try {
       let { id } = req.params;
       const user = await User.findByPk(id);
@@ -136,6 +135,15 @@ class UserController {
         returning: true, 
         individualHooks: true
       });
+      if(nextStatus === "Finished"){
+        await QuarantineDetail.update({ isQuarantined: true }, {
+          where: {
+            userId: id
+          },
+          fields: ['isQuarantined'],
+          individualHooks: true
+        });
+      }
       res.status(200).json({
         id: response[1][0].id,
         name: response[1][0].name,
@@ -214,26 +222,6 @@ class UserController {
           access_token: token,
         });
       }
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  //POST /regisAdmin
-  static async regisAdmin(req, res, next) {
-    try {
-      const resposne = await User.create({
-        name: "Admin",
-        passportNumber: "ADMIN-12345",
-        role: "Admin",
-        email: "admin@admin.com",
-        password: "adminn",
-        phoneNumber: "081234567890",
-        status: "Active",
-      });
-      res.status(201).json({
-        message: "Created admin@admin.com with password *****",
-      });
     } catch (error) {
       next(error);
     }
