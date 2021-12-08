@@ -12,16 +12,6 @@ const adminTest1 = {
   status: "Active",
 };
 
-beforeAll((done) => {
-  User.create(adminTest1)
-    .then(() => {
-      done();
-    })
-    .catch((err) => {
-      done(err);
-    });
-});
-
 afterAll((done) => {
   User.destroy({
     truncate: true,

@@ -9,6 +9,7 @@ const Authentication = require('../middlewares/Authentication')
 const ErrorHandler = require('../middlewares/ErrorHandler')
 const UserController = require('../controllers/UserController')
 
+
 router.get('/', (_, res) => {
   res.json({ message: 'Welcome to the API' })
 })
@@ -23,4 +24,4 @@ router.use('/locations', LocationRouter)
 router.use('/quarantines', QuarantineRouter)
 router.use(ErrorHandler)
 
-module.exports = router
+module.exports = router;
