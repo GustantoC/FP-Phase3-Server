@@ -38,7 +38,10 @@ class QuarantineController {
   //PUT Update QuarantineDeail untuk userId
   static async updateQuarantineDetail(req, res, next) {
     try {
-      let { roomNumber, totalDays, tripOrigin, tripDestination } = req.body
+      if (!req.user.role.startsWith('officer')) {
+        throw { name: '403', message: 'Forbidden' }
+      }
+      let { roomNumber, quarantineUntil, tripOrigin, tripDestination } = req.body
       let { userId } = req.params
 
       const currentQuarantineDetail = await QuarantineDetail.findOne({
@@ -52,14 +55,14 @@ class QuarantineController {
       }
       const response = await QuarantineDetail.update({
         roomNumber,
-        totalDays,
+        quarantineUntil,
         tripOrigin,
         tripDestination
       }, {
         where: {
           id: currentQuarantineDetail.id
         },
-        fields: ['roomNumber','totalDays','tripOrigin','tripDestination'],
+        fields: ['roomNumber','quarantineUntil','tripOrigin','tripDestination'],
         returning: true,
         individualHooks: true
       })
@@ -68,7 +71,7 @@ class QuarantineController {
         userId: response[1][0].userId,
         locationId: response[1][0].locationId,
         roomNumber: response[1][0].roomNumber,
-        totalDays: response[1][0].totalDays,
+        quarantineUntil: response[1][0].quarantineUntil,
         tripOrigin: response[1][0].tripOrigin,
         tripDestination: response[1][0].tripDestination,
         isQuarantined: response[1][0].isQuarantined,
@@ -85,7 +88,7 @@ class QuarantineController {
     "userId": "integer",
     "locationId": "integer",
     "roomNumber": "string",
-    "totalDays": "integer",
+    "quarantineUntil": "date",
     "tripOrigin": "string",
     "tripDestination": "string",
     "isQuarantined": "boolean"

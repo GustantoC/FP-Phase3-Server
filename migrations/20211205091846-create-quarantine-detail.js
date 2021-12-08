@@ -18,7 +18,6 @@ module.exports = {
       },
       locationId: {
         type: Sequelize.INTEGER,
-        allowNull: false,
         references: { 
           model: 'QuarantineLocations',
           key: 'id'

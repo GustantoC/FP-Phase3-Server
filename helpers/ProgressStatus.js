@@ -38,6 +38,9 @@ function progressStatus(status, role = "") {
   if(status == "SwabPertama" && role == "HealthOfficial") {
     return "SwabKedua";
   }
+  if(status == "SwabKedua" && (role == "OfficerHotel" || role == "OfficerWisma")) {
+    return "Finished";
+  }
   return ""
 }
 

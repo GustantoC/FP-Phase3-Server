@@ -1,8 +1,8 @@
-const PasswordHelper = require("../helpers/PasswordHelper");
-const TokenHelper = require("../helpers/TokenHelper");
-const acceptedRoles = require("../helpers/AcceptedStaffRoles");
-const { User } = require("../models");
-const progressStatus = require("../helpers/ProgressStatus");
+const PasswordHelper = require('../helpers/PasswordHelper');
+const TokenHelper = require('../helpers/TokenHelper');
+const acceptedRoles = require('../helpers/AcceptedStaffRoles');
+const { User, QuarantineDetail } = require('../models');
+const progressStatus = require('../helpers/ProgressStatus');
 
 class UserController {
   //GET All User ()
@@ -115,7 +115,6 @@ class UserController {
 
   //PUT Status User
   static async changeStatus(req, res, next) {
-    //TODO: Ini fucntion yang ganti status user berdasarkan yang ganti dan status sekarang
     try {
       let { id } = req.params;
       const user = await User.findByPk(id);
@@ -131,17 +130,23 @@ class UserController {
       if (!nextStatus) {
         throw { name: "403", message: "You can't change user status" };
       }
-      const response = await User.update(
-        { status: nextStatus },
-        {
+      const response = await User.update({ status: nextStatus }, {
+        where: {
+          id: id
+        }, 
+        fields: ['status'],
+        returning: true, 
+        individualHooks: true
+      });
+      if(nextStatus === "Finished"){
+        await QuarantineDetail.update({ isQuarantined: true }, {
           where: {
-            id: id,
+            userId: id
           },
-          fields: ["status"],
-          returning: true,
-          individualHooks: true,
-        }
-      );
+          fields: ['isQuarantined'],
+          individualHooks: true
+        });
+      }
       res.status(200).json({
         id: response[1][0].id,
         name: response[1][0].name,
@@ -213,7 +218,7 @@ class UserController {
         },
       });
       if (!user || !PasswordHelper.comparePassword(password, user.password)) {
-        throw { name: "401", message: "Invalid email or password" };
+        throw { name: "400", message: "Invalid email or password" };
       } else {
         let token = TokenHelper.signPayload({
           id: user.id,
@@ -224,26 +229,6 @@ class UserController {
           access_token: token,
         });
       }
-    } catch (error) {
-      next(error);
-    }
-  }
-
-  //POST /regisAdmin
-  static async regisAdmin(req, res, next) {
-    try {
-      const resposne = await User.create({
-        name: "Admin",
-        passportNumber: "ADMIN-12345",
-        role: "Admin",
-        email: "admin@admin.com",
-        password: "adminn",
-        phoneNumber: "081234567890",
-        status: "Active",
-      });
-      res.status(201).json({
-        message: "Created admin@admin.com with password *****",
-      });
     } catch (error) {
       next(error);
     }
