@@ -13,7 +13,8 @@ class TripController {
       let newTrip = await QuarantineDetail.create({
         userId :  req.user.id,
         tripOrigin,
-        tripDestination
+        tripDestination,
+        isQuarantined: false
       });
       res.status(201).json({
         id: newTrip.id,
