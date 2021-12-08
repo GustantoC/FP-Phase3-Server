@@ -56,6 +56,8 @@ class UserController {
         password: password,
         phoneNumber: phoneNumber,
         status: "ArrivalProcedure",
+      }, {
+        createType: 'user'
       });
       res.status(201).json({
         id: response.id,
@@ -98,6 +100,9 @@ class UserController {
         password: password,
         phoneNumber: phoneNumber,
         status: "Active",
+      }, {
+        createType: 'staff',
+        createdBy: req.user.id
       });
       res.status(200).json({
         id: response.id,
@@ -133,7 +138,10 @@ class UserController {
         }, 
         fields: ['status'],
         returning: true, 
-        individualHooks: true
+        individualHooks: true,
+        updateType: 'user',
+        oldStatus: currStatus,
+        updatedBy: req.user.id
       });
       if(nextStatus === "Finished"){
         await QuarantineDetail.update({ isQuarantined: true }, {
@@ -179,7 +187,10 @@ class UserController {
         }, 
         fields: ['role'],
         returning: true, 
-        individualHooks: true
+        individualHooks: true,
+        updateType: 'staff',
+        updatedBy: req.user.id,
+        oldRole: user.role
       });
       res.status(200).json({
         id: response[1][0].id,

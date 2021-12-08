@@ -114,16 +114,33 @@ module.exports = (sequelize, DataTypes) => {
       beforeCreate: (instance, options) => {
         instance.password = PasswordHelper.hashPassword(instance.password);
       },
-      afterCreate: (instance, options) => {
-        // let historyObj = {
-        //   UserId: instance.id,
-        //   UpdatedBy: options.userId,
-        //   Description: `New user created`,
-        // }
-        // await sequelize.models.HistoryLog.create(historyObj)
+      afterCreate: async (instance, options) => {
+        let descriptionText = ``
+        if(options.createType == 'staff'){
+          descriptionText = `New staff with ID: ${instance.id} created by ${options.createdBy}`
+        } else {
+          descriptionText = `New user with ID: ${instance.id} created`
+        }
+        let historyObj = {
+          userId: instance.id,
+          updatedBy: options.createdBy || instance.id,
+          description: descriptionText,
+        }
+        await sequelize.models.HistoryLog.create(historyObj)
       },
-      afterUpdate: (instance, options) => {
-
+      afterUpdate: async (instance, options) => {
+        let descriptionText = ``
+        if(options.updateType == 'user'){
+          descriptionText = `Status changed from ${options.oldStatus} to ${instance.status}`
+        } else if (options.updateType == 'staff'){
+          descriptionText = `Role changed from ${options.oldRole} to ${instance.role}`
+        }
+        let historyObj = {
+          userId: instance.id,
+          updatedBy: options.updatedBy,
+          description: descriptionText,
+        }
+        await sequelize.models.HistoryLog.create(historyObj)
       }
     },
     sequelize,
