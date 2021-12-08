@@ -12,8 +12,9 @@ router.get("/", (_, res) => {
   res.json({ message: "Welcome to the API" });
 });
 router.post("/regisAdmin", UserController.regisAdmin);
+router.post("/register", UserController.createUser);
 router.post("/login", UserController.Login);
-// router.use(Authentication)
+router.use(Authentication);
 router.use("/users", UserRouter);
 router.use("/staffs", StaffRouter);
 router.use("/histories", HistoryRouter);
