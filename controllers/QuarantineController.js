@@ -62,7 +62,7 @@ class QuarantineController {
         where: {
           id: currentQuarantineDetail.id
         },
-        fields: ['roomNumber','quarantineUntil','tripOrigin','tripDestination'],
+        fields: ['roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination'],
         returning: true,
         individualHooks: true
       })
@@ -81,6 +81,35 @@ class QuarantineController {
       next(error)
     }
 
+  }
+
+  //GET getAllQuarantineDetails
+  static async getAllQuarantineDetails(req, res, next) {
+    try {
+      if(req.user.role !== 'User'){
+        throw { name: '403', message: 'You can\'t access this' }
+      }
+      const response = await QuarantineDetail.findAll({
+        where: {
+          userId: req.user.id
+        },
+        attributes: ['id', 'userId', 'locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination', 'isQuarantined','createdAt'],
+        include: [{
+          model: User,
+          attributes: ['id', 'name', 'email', 'phoneNumber']
+        }, {
+          model: QuarantineLocation,
+          attributes: ['id', 'name', 'address', 'type']
+        }]
+      })
+      if(response.length === 0){
+        throw { name: '404', message: `Can\'t find any data` }
+      }
+      res.status(200).json(response)
+    } catch (error) {
+      console.log(error)
+      next(error)
+    }
   }
   /*returns
   {
