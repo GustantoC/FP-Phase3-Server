@@ -14,11 +14,11 @@ class UserController {
       const response = await User.findAll({
         where: options,
         attributes: {
-          exclude: ['password', 'createdAt', 'updatedAt']
-        }
-      })
+          exclude: ["password", "createdAt", "updatedAt"],
+        },
+      });
       if (response.length === 0) {
-        throw { name: '404', message: 'Can\'t find user' }
+        throw { name: "404", message: "Can't find user" };
       }
       res.status(200).json(response);
     } catch (error) {
@@ -36,7 +36,7 @@ class UserController {
         },
       });
       if (!response) {
-        throw { name: '404', message: 'Can\'t find user' }
+        throw { name: "404", message: "Can't find user" };
       }
       res.status(200).json(response);
     } catch (error) {
@@ -104,7 +104,7 @@ class UserController {
         createType: 'staff',
         createdBy: req.user.id
       });
-      res.status(200).json({
+      res.status(201).json({
         id: response.id,
         name: response.name,
         passportNumber: response.passportNumber,
@@ -124,13 +124,16 @@ class UserController {
       let { id } = req.params;
       const user = await User.findByPk(id);
 
-      if (!user || user.role !== "User") {
-        throw { name: '404', message: 'Can\'t find user' };
+      if (!user) {
+        throw { name: "404", message: "Can't find user" };
+      }
+      if (user.role !== "User") {
+        throw { name: "404", message: "Can't find user" };
       }
       const currStatus = user.status;
       const nextStatus = progressStatus(currStatus, req.user.role);
-      if(!nextStatus){
-        throw { name: '403', message: 'You can\'t change user status' };
+      if (!nextStatus) {
+        throw { name: "403", message: "You can't change user status" };
       }
       const response = await User.update({ status: nextStatus }, {
         where: {
@@ -159,8 +162,8 @@ class UserController {
         role: response[1][0].role,
         email: response[1][0].email,
         phoneNumber: response[1][0].phoneNumber,
-        status: response[1][0].status
-      })
+        status: response[1][0].status,
+      });
     } catch (error) {
       next(error);
     }
@@ -173,12 +176,12 @@ class UserController {
       let { id } = req.params;
 
       if (!acceptedRoles.includes(role)) {
-        throw { name: '400', message: 'Role is not accepted' };
+        throw { name: "400", message: "Role is not accepted" };
       }
 
       const user = await User.findByPk(id);
       if (!user) {
-        throw { name: '404', message: 'Can\'t find user' };
+        throw { name: "404", message: "Can't find user" };
       }
 
       const response = await User.update({ role: role }, {
@@ -199,8 +202,8 @@ class UserController {
         role: response[1][0].role,
         email: response[1][0].email,
         phoneNumber: response[1][0].phoneNumber,
-        status: response[1][0].status
-      })
+        status: response[1][0].status,
+      });
     } catch (error) {
       next(error);
     }
@@ -209,6 +212,7 @@ class UserController {
   //POST /login
   static async Login(req, res, next) {
     try {
+      console.log(req.body);
       const { email, password } = req.body;
       if (!email) {
         throw { name: "400", message: "Email is required" };
