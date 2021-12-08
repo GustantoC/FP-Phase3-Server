@@ -211,7 +211,7 @@ class UserController {
         },
       });
       if (!user || !PasswordHelper.comparePassword(password, user.password)) {
-        throw { name: "401", message: "Invalid email or password" };
+        throw { name: "400", message: "Invalid email or password" };
       } else {
         let token = TokenHelper.signPayload({
           id: user.id,
