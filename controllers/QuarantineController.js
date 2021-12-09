@@ -14,10 +14,10 @@ class QuarantineController {
         if (req.user.role !== 'OfficerAirport') {
           throw { name: '403', message: 'You can\'t access this' }
         }
-      }
-      const checkLocation = await QuarantineLocation.findByPk(locationId)
-      if (!checkLocation) {
-        throw { name: '404', message: `Quarantine Location with ID ${locationId} not found` }
+        const checkLocation = await QuarantineLocation.findByPk(locationId)
+        if (!checkLocation) {
+          throw { name: '404', message: `Quarantine Location with ID ${locationId} not found` }
+        }
       }
 
       const currentQuarantineDetail = await QuarantineDetail.findOne({
