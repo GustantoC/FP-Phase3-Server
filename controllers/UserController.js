@@ -135,6 +135,8 @@ class UserController {
       if (!nextStatus) {
         throw { name: "403", message: "You can't change user status" };
       }
+      //Check driver wisma or hotel
+      //check officer wisma or hotel
       const response = await User.update({ status: nextStatus }, {
         where: {
           id: id
@@ -143,7 +145,6 @@ class UserController {
         returning: true, 
         individualHooks: true,
         updateType: 'user',
-        oldStatus: currStatus,
         updatedBy: req.user.id
       });
       if(nextStatus === "Finished"){

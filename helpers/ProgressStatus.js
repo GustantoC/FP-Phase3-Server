@@ -33,12 +33,12 @@ function progressStatus(status, role = "") {
     return "Quarantine";
   }
   if(status == "Quarantine" && role == "HealthOfficial") {
-    return "SwabPertama";
+    return "1st Swab";
   }
-  if(status == "SwabPertama" && role == "HealthOfficial") {
-    return "SwabKedua";
+  if(status == "1st Swab" && role == "HealthOfficial") {
+    return "2nd Swab";
   }
-  if(status == "SwabKedua" && (role == "OfficerHotel" || role == "OfficerWisma")) {
+  if(status == "2nd Swab" && (role == "OfficerHotel" || role == "OfficerWisma")) {
     return "Finished";
   }
   return ""
