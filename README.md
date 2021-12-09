@@ -605,9 +605,10 @@ Note: Only staff with role `admin` can access this
   {
     "id": "integer",
     "userId": "integer",
-    "updatedBy": "string" || Name of the user,
+    "updatedBy": "integer",
     "description": "string",
-    "createdAt": "dateTime"
+    "createdAt": "dateTime",
+    "updatedAt": "dateTime"
   },
   ...
 ]
@@ -656,14 +657,17 @@ Note: Only staff with role `admin` can access this
 #### `200` - OK
 
 ```json
-{
-  "id": "integer",
-  "userId": "integer",
-  "updatedUser": "name",
-  "updatedBy": "string" || Name of the user,
-  "description": "string",
-  "createdAt": "dateTime"
-}
+[
+  {
+    "id": "integer",
+    "userId": "integer",
+    "updatedBy": "integer",
+    "description": "string",
+    "createdAt": "dateTime",
+    "updatedAt": "dateTime"
+  },
+  ...
+]
 ```
 
 ### Error
