@@ -36,6 +36,15 @@ class TripController {
       if(req.user.role !== 'User'){
         throw { name: '403', message: 'You are not allowed to create a trip' };
       }
+      const findQuarantineNow = await QuarantineDetail.findOne({
+        where:{
+          userId: req.user.id,
+          isQuarantined: false
+        }
+      })
+      if(findQuarantineNow){
+        throw { name: '403', message: 'You are not allowed to create a trip' };
+      }
       let newTrip = await QuarantineDetail.create({
         userId :  req.user.id,
         tripOrigin,
