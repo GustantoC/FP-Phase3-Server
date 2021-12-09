@@ -4,14 +4,14 @@ class QuarantineController {
   //PUT Update QuarantineDeail untuk userId
   static async updateQuarantineDetail(req, res, next) {
     try {
-      if (!req.user.role.startsWith('Officer')) {
+      if (req.user.role == 'User' || req.user.role == 'Admin') {
         throw { name: '403', message: 'You can\'t access this' }
       }
       let { locationId, roomNumber, quarantineUntil, tripOrigin, tripDestination } = req.body
       let { userId } = req.params
 
-      if(locationId){
-        if(req.user.role !== 'OfficerAirport'){
+      if (locationId) {
+        if (req.user.role !== 'OfficerAirport') {
           throw { name: '403', message: 'You can\'t access this' }
         }
       }
@@ -29,7 +29,7 @@ class QuarantineController {
       if (!currentQuarantineDetail) {
         throw { name: '404', message: `Can't find User with ID in quarantine` }
       }
-      console.log(currentQuarantineDetail.id)
+      
       const response = await QuarantineDetail.update({
         locationId,
         roomNumber,
@@ -40,7 +40,7 @@ class QuarantineController {
         where: {
           id: currentQuarantineDetail.id
         },
-        fields: ['locationId','roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination'],
+        fields: ['locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination'],
         returning: true,
         individualHooks: true,
         createdBy: req.user.id,
@@ -66,14 +66,14 @@ class QuarantineController {
   //GET getAllQuarantineDetails
   static async getAllQuarantineDetails(req, res, next) {
     try {
-      if(req.user.role !== 'User'){
+      if (req.user.role !== 'User') {
         throw { name: '403', message: 'You can\'t access this' }
       }
       const response = await QuarantineDetail.findAll({
         where: {
           userId: req.user.id
         },
-        attributes: ['id', 'userId', 'locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination', 'isQuarantined','createdAt'],
+        attributes: ['id', 'userId', 'locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination', 'isQuarantined', 'createdAt'],
         include: [{
           model: User,
           attributes: ['id', 'name', 'email', 'phoneNumber']
@@ -82,7 +82,7 @@ class QuarantineController {
           attributes: ['id', 'name', 'address', 'type']
         }]
       })
-      if(response.length === 0){
+      if (response.length === 0) {
         throw { name: '404', message: `Can\'t find any data` }
       }
       res.status(200).json(response)
