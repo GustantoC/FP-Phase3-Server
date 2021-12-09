@@ -41,6 +41,8 @@ class TripController {
         tripOrigin,
         tripDestination,
         isQuarantined: false
+      },{
+        createdBy: req.user.id
       });
       res.status(201).json({
         id: newTrip.id,

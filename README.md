@@ -51,7 +51,6 @@
 | Type   | Path                               | Description                                                                    |
 | :----- | :--------------------------------- | :----------------------------------------------------------------------------- |
 | `GET`  | '/quarantines'                     | [Get quarantineDetails for userId](#get-quarantinedetail-for-userId)           |
-| `POST` | '/quarantines/:userId/:locationId' | [Creating a Quarantine Detail for the user](#create-quarantinedetail-for-user) |
 | `PUT`  | '/quarantines/:userId'             | [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user)      |
 
 ### List of Roles
@@ -911,72 +910,6 @@ note again : The data is based on the user accessing this
 
 ---
 
-# Create QuarantineDetail for User
-
-[Back to list of API](#list-of-apis)
-
-```http
-  POST /quarantines/:userId/:locationId
-```
-
-| Header         | Type     | Description                     |
-| :------------- | :------- | :------------------------------ |
-| `access_token` | `string` | **Required**. Your access_token |
-
-note: only `OfficerAirport` can access this
-
-| Parameter    | Type      | Description                                     |
-| :----------- | :-------- | :---------------------------------------------- |
-| `userId`     | `integer` | **Required**. Id of user that wants to be added |
-| `locationId` | `integer` | **Required**. Id of the location                |
-
-### Response
-
-#### `201` - OK
-
-```json
-{
-  "id": "integer",
-  "userId": "integer",
-  "locationId": "integer",
-  "roomNumber": null
-}
-```
-
-## Note : Default value for roomNumber is null
-
-### Error
-
-#### `401` - Unauthorized
-
-```json
-{
-  "message": "Token Invalid"
-}
-```
-
-#### `403` - Forbidden
-
-```json
-{
-  "message": "You can't access this"
-}
-```
-
-#### `404` - NotFound
-
-```json
-{
-  "message": "User with ID not found"
-}
-- OR -
-{
-  "message": "Location with ID not found"
-}
-```
-
----
-
 # Update Quarantine Detail for User
 
 [Back to list of API](#list-of-apis)
@@ -989,7 +922,7 @@ note: only `OfficerAirport` can access this
 | :------------- | :------- | :------------------------------ |
 | `access_token` | `string` | **Required**. Your access_token |
 
-note: only `Officer` can access this
+note: only `Officer(s)` can access this
 
 | Parameter | Type      | Description                                     |
 | :-------- | :-------- | :---------------------------------------------- |
@@ -997,6 +930,7 @@ note: only `Officer` can access this
 
 | Body              | Type     | Description          |
 | :---------------- | :------- | :------------------- |
+| `locationId`      | `integer` | LocationID to add   |
 | `roomNumber`      | `string` | Room Number to add   |
 | `quarantineUntil` | `date`   | Quarantine date ends |
 | `tripOrigin`      | `string` | Trip Origin          |
@@ -1042,6 +976,10 @@ note: only `Officer` can access this
 ```json
 {
   "message": "Can't find User with ID in quarantine"
+}
+- OR -
+{
+  "message": "Quarantine Location with ID  not found"
 }
 ```
 

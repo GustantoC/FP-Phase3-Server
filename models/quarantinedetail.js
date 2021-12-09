@@ -47,17 +47,42 @@ module.exports = (sequelize, DataTypes) => {
     isQuarantined: DataTypes.BOOLEAN,
   }, {
     hooks: {
-      afterCreate: (instance, options) => {
-        // let historyObj = {
-        //   userId: instance.id,
-        //   title: "Created",
-        //   description: `New room with ID: ${instance.id} created`,
-        //   updatedBy: instance.authorId
-        // }
-        // await sequelize.models.HistoryLog.create(historyObj)
+      afterCreate: async (instance, options) => {
+        let descriptionText = `New Quarantine Detail created for ${instance.userId}`;
+        let historyObj = {
+          userId: instance.id,
+          updatedBy: options.createdBy,
+          description: descriptionText,
+        }
+        await sequelize.models.HistoryLog.create(historyObj)
       },
-      afterUpdate: (instance, options) => {
-        
+      afterUpdate: async (instance, options) => {
+        let descriptionText = `Quarantine for ${instance.userId} updated to: `;
+
+        if (instance.locationId) {
+          descriptionText += `LocaionId: ${options.locationName};`;
+        }
+        if(instance.roomNumber) {
+          descriptionText += `Room Number: ${instance.roomNumber};`;
+        }
+        if(instance.quarantineUntil) {
+          descriptionText += `Quarantine Until: ${instance.quarantineUntil};`;
+        }
+        if(instance.tripOrigin) {
+          descriptionText += `Trip Origin: ${instance.tripOrigin};`;
+        }
+        if(instance.tripDestination) {
+          descriptionText += `Trip Destination: ${instance.tripDestination};`;
+        }
+        if(instance.isQuarantined) {
+          descriptionText += `Is Quarantined!`;
+        }
+        let historyObj = {
+          userId: options.createdBy,
+          updatedBy: options.createdBy,
+          description: descriptionText,
+        }
+        await sequelize.models.HistoryLog.create(historyObj)
       }
     },
     sequelize,
