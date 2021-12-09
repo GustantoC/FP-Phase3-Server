@@ -1,8 +1,8 @@
-const PasswordHelper = require('../helpers/PasswordHelper');
-const TokenHelper = require('../helpers/TokenHelper');
-const acceptedRoles = require('../helpers/AcceptedStaffRoles');
-const { User, QuarantineDetail } = require('../models');
-const progressStatus = require('../helpers/ProgressStatus');
+const PasswordHelper = require("../helpers/PasswordHelper");
+const TokenHelper = require("../helpers/TokenHelper");
+const acceptedRoles = require("../helpers/AcceptedStaffRoles");
+const { User, QuarantineDetail } = require("../models");
+const progressStatus = require("../helpers/ProgressStatus");
 
 class UserController {
   //GET All User ()
@@ -14,11 +14,11 @@ class UserController {
       const response = await User.findAll({
         where: options,
         attributes: {
-          exclude: ['password', 'createdAt', 'updatedAt']
-        }
-      })
+          exclude: ["password", "createdAt", "updatedAt"],
+        },
+      });
       if (response.length === 0) {
-        throw { name: '404', message: 'Can\'t find user' }
+        throw { name: "404", message: "Can't find user" };
       }
       res.status(200).json(response);
     } catch (error) {
@@ -36,7 +36,7 @@ class UserController {
         },
       });
       if (!response) {
-        throw { name: '404', message: 'Can\'t find user' }
+        throw { name: "404", message: "Can't find user" };
       }
       res.status(200).json(response);
     } catch (error) {
@@ -48,15 +48,20 @@ class UserController {
   static async createUser(req, res, next) {
     try {
       let { name, passportNumber, email, password, phoneNumber } = req.body;
-      const response = await User.create({
-        name: name,
-        passportNumber: passportNumber,
-        role: "User",
-        email: email,
-        password: password,
-        phoneNumber: phoneNumber,
-        status: "ArrivalProcedure",
-      });
+      const response = await User.create(
+        {
+          name: name,
+          passportNumber: passportNumber,
+          role: "User",
+          email: email,
+          password: password,
+          phoneNumber: phoneNumber,
+          status: "ArrivalProcedure",
+        },
+        {
+          createType: "user",
+        }
+      );
       res.status(201).json({
         id: response.id,
         name: response.name,
@@ -90,16 +95,22 @@ class UserController {
       if (!acceptedRoles.includes(role)) {
         throw { name: "400", message: "Role is not accepted" };
       }
-      const response = await User.create({
-        name: name,
-        passportNumber: "Staff",
-        role: role,
-        email: email,
-        password: password,
-        phoneNumber: phoneNumber,
-        status: "Active",
-      });
-      res.status(200).json({
+      const response = await User.create(
+        {
+          name: name,
+          passportNumber: "Staff",
+          role: role,
+          email: email,
+          password: password,
+          phoneNumber: phoneNumber,
+          status: "Active",
+        },
+        {
+          createType: "staff",
+          createdBy: req.user.id,
+        }
+      );
+      res.status(201).json({
         id: response.id,
         name: response.name,
         passportNumber: response.passportNumber,
@@ -119,30 +130,42 @@ class UserController {
       let { id } = req.params;
       const user = await User.findByPk(id);
 
-      if (!user || user.role !== "User") {
-        throw { name: '404', message: 'Can\'t find user' };
+      if (!user) {
+        throw { name: "404", message: "Can't find user" };
+      }
+      if (user.role !== "User") {
+        throw { name: "404", message: "Can't find user" };
       }
       const currStatus = user.status;
       const nextStatus = progressStatus(currStatus, req.user.role);
-      if(!nextStatus){
-        throw { name: '403', message: 'You can\'t change user status' };
+      if (!nextStatus) {
+        throw { name: "403", message: "You can't change user status" };
       }
-      const response = await User.update({ status: nextStatus }, {
-        where: {
-          id: id
-        }, 
-        fields: ['status'],
-        returning: true, 
-        individualHooks: true
-      });
-      if(nextStatus === "Finished"){
-        await QuarantineDetail.update({ isQuarantined: true }, {
+      const response = await User.update(
+        { status: nextStatus },
+        {
           where: {
-            userId: id
+            id: id,
           },
-          fields: ['isQuarantined'],
-          individualHooks: true
-        });
+          fields: ["status"],
+          returning: true,
+          individualHooks: true,
+          updateType: "user",
+          oldStatus: currStatus,
+          updatedBy: req.user.id,
+        }
+      );
+      if (nextStatus === "Finished") {
+        await QuarantineDetail.update(
+          { isQuarantined: true },
+          {
+            where: {
+              userId: id,
+            },
+            fields: ["isQuarantined"],
+            individualHooks: true,
+          }
+        );
       }
       res.status(200).json({
         id: response[1][0].id,
@@ -151,8 +174,8 @@ class UserController {
         role: response[1][0].role,
         email: response[1][0].email,
         phoneNumber: response[1][0].phoneNumber,
-        status: response[1][0].status
-      })
+        status: response[1][0].status,
+      });
     } catch (error) {
       next(error);
     }
@@ -165,22 +188,28 @@ class UserController {
       let { id } = req.params;
 
       if (!acceptedRoles.includes(role)) {
-        throw { name: '400', message: 'Role is not accepted' };
+        throw { name: "400", message: "Role is not accepted" };
       }
 
       const user = await User.findByPk(id);
       if (!user) {
-        throw { name: '404', message: 'Can\'t find user' };
+        throw { name: "404", message: "Can't find user" };
       }
 
-      const response = await User.update({ role: role }, {
-        where: {
-          id: id
-        }, 
-        fields: ['role'],
-        returning: true, 
-        individualHooks: true
-      });
+      const response = await User.update(
+        { role: role },
+        {
+          where: {
+            id: id,
+          },
+          fields: ["role"],
+          returning: true,
+          individualHooks: true,
+          updateType: "staff",
+          updatedBy: req.user.id,
+          oldRole: user.role,
+        }
+      );
       res.status(200).json({
         id: response[1][0].id,
         name: response[1][0].name,
@@ -188,8 +217,8 @@ class UserController {
         role: response[1][0].role,
         email: response[1][0].email,
         phoneNumber: response[1][0].phoneNumber,
-        status: response[1][0].status
-      })
+        status: response[1][0].status,
+      });
     } catch (error) {
       next(error);
     }
@@ -198,6 +227,7 @@ class UserController {
   //POST /login
   static async Login(req, res, next) {
     try {
+      console.log(req.body);
       const { email, password } = req.body;
       if (!email) {
         throw { name: "400", message: "Email is required" };

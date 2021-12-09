@@ -26,10 +26,10 @@ afterAll((done) => {
     });
 });
 
-describe("POST /users, [SUCCESS  REGISTER CASE]", () => {
+describe("POST /register, [SUCCESS  REGISTER CASE]", () => {
   test("Should return status 201", (done) => {
     request(app)
-      .post("/users")
+      .post("/register")
       .send(userTest)
       .end((err, res) => {
         if (err) return done(err);
@@ -58,14 +58,14 @@ let userError = {
   status: "ArrivalProcedure",
 };
 
-describe("POST /users, [FAILED  REGISTER CASE]", () => {
+describe("POST /register, [FAILED  REGISTER CASE]", () => {
   test("Should return status 400 when name null", (done) => {
     let nameNull = {
       ...userError,
       name: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(nameNull)
       .end((err, res) => {
         if (err) return done(err);
@@ -81,7 +81,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       passportNumber: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(passportNumberNull)
       .end((err, res) => {
         if (err) return done(err);
@@ -97,7 +97,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       roleNull: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(roleNull)
       .end((err, res) => {
         if (err) return done(err);
@@ -113,7 +113,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       email: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(emailNull)
       .end((err, res) => {
         if (err) return done(err);
@@ -130,7 +130,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       email: "testUser@mail.com",
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(emailAlreadyUse)
       .end((err, res) => {
         if (err) return done(err);
@@ -147,7 +147,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       email: "test1mail.com",
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(wrongFormatEmail)
       .end((err, res) => {
         if (err) return done(err);
@@ -164,7 +164,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       password: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(passwordNull)
       .end((err, res) => {
         if (err) return done(err);
@@ -181,7 +181,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       password: "pass",
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(passwordUnder)
       .end((err, res) => {
         if (err) return done(err);
@@ -198,7 +198,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       phoneNumber: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(phoneNumberNull)
       .end((err, res) => {
         if (err) return done(err);
@@ -214,7 +214,7 @@ describe("POST /users, [FAILED  REGISTER CASE]", () => {
       status: null,
     };
     request(app)
-      .post("/users")
+      .post("/register")
       .send(statusNull)
       .end((err, res) => {
         if (err) return done(err);

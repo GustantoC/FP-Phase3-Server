@@ -13,8 +13,18 @@ beforeAll((done) => {
     phoneNumber: "111333",
     status: "Active",
   };
+  const userChangeStatus = {
+    name: "testuser",
+    passportNumber: "9804535",
+    role: "User",
+    email: "testUser@mail.com",
+    password: "password",
+    phoneNumber: "4532461",
+    status: "ArrivalProcedure",
+  };
   User.create(adminLoginTest)
     .then(() => {
+      User.create(userChangeStatus);
       done();
     })
     .catch((err) => {
@@ -56,23 +66,6 @@ describe("GET /users ", () => {
         return done();
       });
   });
-  //   test("401, should return mesage [FAILED GET DATA USER]", (done) => {
-  //     const invalidToken =
-  //       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIwMUBtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE2MjI2MDk2NTF9.gShAB2qaCUjlnvNuM1MBWfBVEjDGdqjWSJNMEScXIeE";
-
-  //     request(app)
-  //       .get("/users")
-  //       .set("Accept", "application/json")
-  //       .set("access_token", invalidToken)
-  //       .end((err, res) => {
-  //         if (err) return done(err);
-  //         const { body, status } = res;
-
-  //         expect(status).toBe(401);
-  //         expect(body).toHaveProperty("message", "Invalid token");
-  //         return done();
-  //       });
-  //   });
 });
 
 describe("GET /users:id", () => {
@@ -80,7 +73,7 @@ describe("GET /users:id", () => {
     let access_token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
-      role: "User",
+      role: "Admin",
     });
     request(app)
       .get("/users/1")
@@ -118,8 +111,4 @@ describe("GET /users:id", () => {
         return done();
       });
   });
-});
-
-describe("PUT /users:id", () => {
-  test();
 });
