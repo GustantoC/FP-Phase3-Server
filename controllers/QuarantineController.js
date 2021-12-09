@@ -29,7 +29,7 @@ class QuarantineController {
       if (!currentQuarantineDetail) {
         throw { name: '404', message: `Can't find User with ID in quarantine` }
       }
-      
+
       const response = await QuarantineDetail.update({
         locationId,
         roomNumber,
@@ -76,7 +76,7 @@ class QuarantineController {
         attributes: ['id', 'userId', 'locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination', 'isQuarantined', 'createdAt'],
         include: [{
           model: User,
-          attributes: ['id', 'name', 'email', 'phoneNumber']
+          attributes: ['id', 'name', 'email', 'phoneNumber', 'status']
         }, {
           model: QuarantineLocation,
           attributes: ['id', 'name', 'address', 'type']
