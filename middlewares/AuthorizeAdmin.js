@@ -1,5 +1,3 @@
-const { User } = require('../models')
-
 async function AuthorizeAdmin(req, res, next) {
   try {
     if (req.user.role !== "Admin") {
