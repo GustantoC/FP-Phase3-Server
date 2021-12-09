@@ -1,7 +1,8 @@
 const router = require('express').Router();
 const QuarantineController = require('../controllers/QuarantineController');
 
-router.post('/:userId/:locationId', QuarantineController.createQuarantineDetail);
+
+router.get('/', QuarantineController.getAllQuarantineDetails);
 //Officer doang yang bisa akses ini
 router.put('/:userId', QuarantineController.updateQuarantineDetail);
 

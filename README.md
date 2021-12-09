@@ -1,57 +1,57 @@
-
 ## API Reference
 
 ## List of APIs
 
 #### Login
 
-|Type|Path|Description|
-|:-|:-|:-|
-|`POST`|'/login'|[Login user](#login-user)|  
+| Type   | Path     | Description               |
+| :----- | :------- | :------------------------ |
+| `POST` | '/login' | [Login user](#login-user) |
 
 #### Users
 
-|Type|Path|Description|
-|:-|:-|:-|
-|`GET`|'/users'|[Get all user (can be queried for roles)](#get-all-users)|
-|`GET`|'/users/:id'|[Get detail of user with id `:id`](#get-user)|
-|`POST`|'/users'|[Create new user (register)](#create-user)|
-|`PUT`|'/users/:id'|[Update status of the user](#change-user-status)|
+| Type   | Path         | Description                                               |
+| :----- | :----------- | :-------------------------------------------------------- |
+| `GET`  | '/users'     | [Get all user (can be queried for roles)](#get-all-users) |
+| `GET`  | '/users/:id' | [Get detail of user with id `:id`](#get-user)             |
+| `POST` | '/users'     | [Create new user (register)](#create-user)                |
+| `PUT`  | '/users/:id' | [Update status of the user](#change-user-status)          |
+
 ### Trips
 
-|Type|Path|Description|
-|:-|:-|:-|
-|`GET`|'/trips'|[Get all trip](#get-trips)|
-|`POST`|'/trips'|[Create New Trip](#create-trips)|
+| Type   | Path     | Description                      |
+| :----- | :------- | :------------------------------- |
+| `GET`  | '/trips' | [Get all trip](#get-trips)       |
+| `POST` | '/trips' | [Create New Trip](#create-trips) |
+
 #### Staffs
 
-|Type|Path|Description|
-|:-|:-|:-|
-|`POST`|'/staffs'|[Create new Staff](#create-staff)|
-|`PUT`|'/staffs/:id'|[Change the role of the staff](#change-staff-role)|
+| Type   | Path          | Description                                        |
+| :----- | :------------ | :------------------------------------------------- |
+| `POST` | '/staffs'     | [Create new Staff](#create-staff)                  |
+| `PUT`  | '/staffs/:id' | [Change the role of the staff](#change-staff-role) |
 
 #### History
-|Type|Path|Description|
-|:-|:-|:-|
-|`GET`|'/histories'|[Get all history](#get-list-of-history)|
-|`GET`|'/histories/:userId'|[Get history from the userId](#get-history-by-userid)| 
 
+| Type  | Path                 | Description                                           |
+| :---- | :------------------- | :---------------------------------------------------- |
+| `GET` | '/histories'         | [Get all history](#get-list-of-history)               |
+| `GET` | '/histories/:userId' | [Get history from the userId](#get-history-by-userid) |
 
 #### Location
 
-|Type|Path|Description|
-|:-|:-|:-|
-|`GET`|'/locations'|[Get all locations](#get-list-of-locations)|
-|`GET`|'/locations/:userId'|[Get the detail location of `userId`](#get-location-user-of-userid)|
-|`POST`|'/locations'| [Adding new location (Admin Only)](#create-new-location)| 
-
+| Type   | Path                 | Description                                                         |
+| :----- | :------------------- | :------------------------------------------------------------------ |
+| `GET`  | '/locations'         | [Get all locations](#get-list-of-locations)                         |
+| `GET`  | '/locations/:userId' | [Get the detail location of `userId`](#get-location-user-of-userid) |
+| `POST` | '/locations'         | [Adding new location (Admin Only)](#create-new-location)            |
 
 ### Quarantine
 
-|Type|Path|Description|
-|:-|:-|:-|
-|`POST`|'/quarantines/:userId/:locationId'| [Creating a Quarantine Detail for the user](#create-quarantinedetail-for-user) |
-|`PUT`|'/quarantines/:userId'| [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user) | 
+| Type   | Path                               | Description                                                                    |
+| :----- | :--------------------------------- | :----------------------------------------------------------------------------- |
+| `GET`  | '/quarantines'                     | [Get quarantineDetails for userId](#get-quarantinedetail-for-userId)           |
+| `PUT`  | '/quarantines/:userId'             | [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user)      |
 
 ### List of Roles
 
@@ -64,7 +64,7 @@
 - HealthOfficial
 - User
 
-### List of User status 
+### List of User status
 
 - ArrivalProcedure
 - Interview
@@ -75,23 +75,29 @@
 - Quarantine
 - SwabPertama
 - SwabKedua
-## 
+
 ##
 
-# Login User  
+##
+
+# Login User
+
 [Back to list of API](#list-of-apis)
+
 ```http
   POST /login
 ```
 
-|Body|Type|Description|
-|:-|:-|:-|
-| `email` | `string` | **Required**. Login User |
+| Body       | Type     | Description               |
+| :--------- | :------- | :------------------------ |
+| `email`    | `string` | **Required**. Login User  |
 | `password` | `string` | **Required**. Login email |
 
 ### Response
+
 #### `200` - OK
-```json
+
+````json
 [
   {
     "access_token": "string"
@@ -108,34 +114,38 @@
 {
   "message": "Password is required"
 }
-```
+````
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Invalid email or password"
 }
 ```
 
-
 ---
 
 # Get all users
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /users
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-|Query|Type|Description|
-|:-|:-|:-|
+| Query  | Type     | Description                  |
+| :----- | :------- | :--------------------------- |
 | `role` | `string` | **Optional**. Query the role |
 
 ### Response
+
 #### `200` - OK
+
 ```json
 [
   {
@@ -151,13 +161,6 @@
 ]
 ```
 
-#### `404` - Not Found
-```json
-{
-  "message":
-}
-```
-
 ---
 
 ---
@@ -165,21 +168,23 @@
 # Get user
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /users/:id
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `id`| `intger`|**Required**. Id of user to fetch|
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `id`      | `intger` | **Required**. Id of user to fetch |
 
+### Response
 
-### Response 
 #### `200` - OK
+
 ```json
 {
   "id": "integer",
@@ -193,7 +198,9 @@
 ```
 
 ### Error
+
 #### `404` - NotFound
+
 ```json
 {
   "message": "Can't find user"
@@ -205,24 +212,27 @@
 # Create User
 
 [Back to list of API](#list-of-apis)
+
 ```http
   POST /users
 ```
 
-|Body|Type|Description|
-|:-|:-|:-|
-| `name` | `string` | **Required**. User Name |
+| Body             | Type     | Description                        |
+| :--------------- | :------- | :--------------------------------- |
+| `name`           | `string` | **Required**. User Name            |
 | `passportNumber` | `string` | **Required**. User Passport Number |
-| `email` | `string` | **Required**. User Email |
-| `password` | `string` | **Required**. User Password |
-| `phoneNumber` | `string` | **Required**. User Phone Number |
+| `email`          | `string` | **Required**. User Email           |
+| `password`       | `string` | **Required**. User Password        |
+| `phoneNumber`    | `string` | **Required**. User Phone Number    |
 
-Note : `role` is not needed because on   
+Note : `role` is not needed because on  
 create the default for role in this **Endpoint**  
 and `status` of `ArrivalProcedure`
 
 ### Response
+
 #### `201` - Created
+
 ```json
 {
   "id": "integer",
@@ -236,7 +246,9 @@ and `status` of `ArrivalProcedure`
 ```
 
 ### Error
+
 #### `400` - BadParameter
+
 ```json
 {
   "message": "Name is required"
@@ -276,21 +288,23 @@ and `status` of `ArrivalProcedure`
 # Change User Status
 
 [Back to list of API](#list-of-apis)
+
 ```http
   PUT /users/:id
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `id`| `intger`|**Required**. Id of User to change|
+| Parameter | Type     | Description                        |
+| :-------- | :------- | :--------------------------------- |
+| `id`      | `intger` | **Required**. Id of User to change |
 
+### Response
 
-### Response 
 #### `200` - OK
+
 ```json
 {
   "id": "integer",
@@ -304,19 +318,25 @@ and `status` of `ArrivalProcedure`
 ```
 
 ### Error
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You can't change user status"
 }
 ```
+
 #### `404` - NotFound
+
 ```json
 {
   "message": "Can't find user"
@@ -324,21 +344,25 @@ and `status` of `ArrivalProcedure`
 ```
 
 ---
+
 # GET Trips
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /trips
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|  
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
 Note : Getting the trips is based on the access_token
 
 ### Returns
+
 #### `200` - Created
+
 ```json
 {
   "id": "integer", //User Id
@@ -348,8 +372,11 @@ Note : Getting the trips is based on the access_token
   "createdAt": "date"
 }
 ```
+
 ### Error
+
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You are not an user"
@@ -361,23 +388,26 @@ Note : Getting the trips is based on the access_token
 # Create Trips
 
 [Back to list of API](#list-of-apis)
+
 ```http
   POST /trips
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|  
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
 Note : creating new user trips based on the current access token
 
-
-|Body|Type|Description|
-|:-|:-|:-|
-| `tripOrigin` | `string` | **Required**. Trip Origin |
+| Body              | Type     | Description                    |
+| :---------------- | :------- | :----------------------------- |
+| `tripOrigin`      | `string` | **Required**. Trip Origin      |
 | `tripDestination` | `string` | **Required**. Trip destination |
+
 ### Returns
+
 #### `201` - Created
+
 ```json
 {
   "id": "integer",
@@ -385,8 +415,11 @@ Note : creating new user trips based on the current access token
   "tripDestination": "string"
 }
 ```
+
 ### Error
+
 #### `400` - Bad Parameter
+
 ```json
 {
   "message": "Please provide origin and destination"
@@ -394,6 +427,7 @@ Note : creating new user trips based on the current access token
 ```
 
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You are not an user"
@@ -401,29 +435,33 @@ Note : creating new user trips based on the current access token
 ```
 
 ---
+
 # Create Staff
 
 [Back to list of API](#list-of-apis)
+
 ```http
   POST /staffs
 ```
 
-|Body|Type|Description|
-|:-|:-|:-|
-| `name` | `string` | **Required**. Staff Name |
-| `role` | `string` | **Required**. Staff Role Only accepts from the list above |
-| `email` | `string` | **Required**. Staff Email |
-| `password` | `string` | **Required**. Staff Password |
-| `phoneNumber` | `string` | **Required**. Staff Phone Number |
+| Body          | Type     | Description                                               |
+| :------------ | :------- | :-------------------------------------------------------- |
+| `name`        | `string` | **Required**. Staff Name                                  |
+| `role`        | `string` | **Required**. Staff Role Only accepts from the list above |
+| `email`       | `string` | **Required**. Staff Email                                 |
+| `password`    | `string` | **Required**. Staff Password                              |
+| `phoneNumber` | `string` | **Required**. Staff Phone Number                          |
 
-Note : `passportNumber` and `status` is not needed because on   
-create the default for role in this **Endpoint**  
+Note : `passportNumber` and `status` is not needed because on  
+create the default for role in this **Endpoint**
 
 is `passportNumber` of `Staff`  
 and `status` of `Active`
 
 ### Returns
+
 #### `201` - Created
+
 ```json
 {
   "id": "integer",
@@ -435,9 +473,11 @@ and `status` of `Active`
   "status": "Active"
 }
 ```
-  
+
 ### Error
+
 #### `400` - BadParameter
+
 ```json
 {
   "message": "Name is required"
@@ -481,25 +521,27 @@ and `status` of `Active`
 # Change Staff Role
 
 [Back to list of API](#list-of-apis)
+
 ```http
   PUT /staffs/:id
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `id`| `intger`|**Required**. Id of User to change|
+| Parameter | Type     | Description                        |
+| :-------- | :------- | :--------------------------------- |
+| `id`      | `intger` | **Required**. Id of User to change |
 
-|Body|Type|Description|
-|:-|:-|:-|
-| `role`| `string`|**Required**. The role of the staff to change|
+| Body   | Type     | Description                                   |
+| :----- | :------- | :-------------------------------------------- |
+| `role` | `string` | **Required**. The role of the staff to change |
 
+### Response
 
-### Response 
 #### `200` - OK
+
 ```json
 {
   "id": "integer",
@@ -515,6 +557,7 @@ and `status` of `Active`
 ### Error
 
 #### `400` - Bad Parameter
+
 ```json
 {
   "message": "Role is not accepted"
@@ -522,12 +565,15 @@ and `status` of `Active`
 ```
 
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `404` - NotFound
+
 ```json
 {
   "message": "Can't find user"
@@ -539,17 +585,21 @@ and `status` of `Active`
 # Get list of history
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /histories
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
+
 Note: Only staff with role `admin` can access this
 
 ### Response
+
 #### `200` - OK
+
 ```json
 [
   {
@@ -564,39 +614,47 @@ Note: Only staff with role `admin` can access this
 ```
 
 ### Error
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You can't access this"
 }
 ```
+
 ---
 
 # Get history by userId
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /histories/:userId
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
+
 Note: Only staff with role `admin` can access this
 
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `userId`| `intger`|**Required**. UserID of the history to check|
+| Parameter | Type     | Description                                  |
+| :-------- | :------- | :------------------------------------------- |
+| `userId`  | `intger` | **Required**. UserID of the history to check |
 
+### Response
 
-### Response 
 #### `200` - OK
+
 ```json
 {
   "id": "integer",
@@ -609,13 +667,17 @@ Note: Only staff with role `admin` can access this
 ```
 
 ### Error
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You can't access this"
@@ -623,6 +685,7 @@ Note: Only staff with role `admin` can access this
 ```
 
 #### `404` - NotFound
+
 ```json
 {
   "message": "Can't find user"
@@ -631,21 +694,22 @@ Note: Only staff with role `admin` can access this
 
 ---
 
-
 # Get list of locations
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /locations
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
-
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
 ### Response
+
 #### `200` - OK
+
 ```json
 [
   {
@@ -657,25 +721,29 @@ Note: Only staff with role `admin` can access this
   ...
 ]
 ```
+
 ---
 
 # Get location user of userId
 
 [Back to list of API](#list-of-apis)
+
 ```http
   GET /locations/:userId
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `userId`| `intger`|**Required**. UserID of the location to get|
+| Parameter | Type     | Description                                 |
+| :-------- | :------- | :------------------------------------------ |
+| `userId`  | `intger` | **Required**. UserID of the location to get |
 
 ### Response
+
 #### `200` - OK
+
 ```json
 {
   "id": "integer",
@@ -686,13 +754,17 @@ Note: Only staff with role `admin` can access this
 ```
 
 ### Error
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `404` - NotFound
+
 ```json
 {
   "message": "Can't find user"
@@ -702,29 +774,33 @@ Note: Only staff with role `admin` can access this
   "message": "User is not on any location"
 }
 ```
+
 ---
 
 # Create new location
 
 [Back to list of API](#list-of-apis)
+
 ```http
   POST /locations
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|  
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
 note: Only `admins` can create new locations
 
-|Body|Type|Description|
-|:-|:-|:-|
-| `name` | `string` | **Required**. Location Name |
+| Body      | Type     | Description                           |
+| :-------- | :------- | :------------------------------------ |
+| `name`    | `string` | **Required**. Location Name           |
 | `address` | `string` | **Required**. Address of the location |
-| `type` | `string` | "Wisma" -or- "Hotel" | 
+| `type`    | `string` | "Wisma" -or- "Hotel"                  |
 
 ### Response
+
 #### `201` - OK
+
 ```json
 {
   "id": "integer",
@@ -735,13 +811,17 @@ note: Only `admins` can create new locations
 ```
 
 ### Error
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `400` - Bad Parameter
+
 ```json
 {
   "message": "Please enter a name for the location"
@@ -751,49 +831,69 @@ note: Only `admins` can create new locations
   "message": "Please enter an address for the location"
 }
 ```
+
 ---
 
-# Create QuarantineDetail for User
+# Get QuarantineDetail for UserId
 
 [Back to list of API](#list-of-apis)
+
 ```http
-  POST /quarantines/:userId/:locationId
+  GET /quarantines
 ```
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|  
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-note: only `OfficerAirport` can access this
-
-
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `userId` | `integer` | **Required**. Id of user that wants to be added |
-| `locationId` | `integer` | **Required**. Id of the location |
+note: only `User` can access this
+note again : The data is based on the user accessing this
 
 ### Response
-#### `201` - OK
-```json
-{
-  "id": "integer",
-  "userId": "integer",
-  "locationId": "integer",
-  "roomNumber": null
-}
-```
 
-## Note : Default value for roomNumber is null
+#### `200` - OK
+
+```json
+[
+  {
+    "id": "integer",
+    "userId": "integer",
+    "locationId": "integer" || nullable,
+    "roomNumber": "string" || nullable,
+    "quarantineUntil": "date" || nullable,
+    "tripOrigin": "string" || nullable,
+    "tripDestination": "string" || nullable,
+    "isQuarantined": "boolean" || nullable,
+    "createdAt": "date",
+    "User": {
+      "id": "integer",
+      "name": "string",
+      "email": "string",
+      "phoneNumber": "string"
+    },
+    "QuarantineLocation": { || nullable
+      "id": "integer",
+      "name": "string",
+      "address": "text",
+      "type": "Wisma" || "Hotel"
+    }
+  },
+  ...
+]
+```
 
 ### Error
 
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You can't access this"
@@ -804,43 +904,42 @@ note: only `OfficerAirport` can access this
 
 ```json
 {
-  "message": "User with ID not found"
-}
-- OR -
-{
-  "message": "Location with ID not found"
+  "message": "Can't find any data" 
 }
 ```
+
 ---
 
 # Update Quarantine Detail for User
 
 [Back to list of API](#list-of-apis)
+
 ```http
   PUT /quarantines/:userId
 ```
 
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
 
-|Header|Type|Description|
-|:-|:-|:-|
-|`access_token`|`string`|**Required**. Your access_token|  
+note: only `Officer(s)` can access this
 
-note: only `Officer` can access this
+| Parameter | Type      | Description                                     |
+| :-------- | :-------- | :---------------------------------------------- |
+| `userId`  | `integer` | **Required**. Id of user that wants to be added |
 
-
-|Parameter|Type|Description|
-|:-|:-|:-|
-| `userId` | `integer` | **Required**. Id of user that wants to be added |
-
-|Body|Type|Description|
-|:-|:-|:-|
-| `roomNumber` | `string` |  Room Number to add |
-| `quarantineUntil` | `date` |  Quarantine date ends |
-| `tripOrigin` | `string` |  Trip Origin |
-| `tripDestination` | `string` | Trip Destination  |
+| Body              | Type     | Description          |
+| :---------------- | :------- | :------------------- |
+| `locationId`      | `integer` | LocationID to add   |
+| `roomNumber`      | `string` | Room Number to add   |
+| `quarantineUntil` | `date`   | Quarantine date ends |
+| `tripOrigin`      | `string` | Trip Origin          |
+| `tripDestination` | `string` | Trip Destination     |
 
 ### Response
+
 #### `200` - OK
+
 ```json
 {
   "id": "integer",
@@ -855,26 +954,36 @@ note: only `Officer` can access this
 ```
 
 ### Error
+
 #### `401` - Unauthorized
+
 ```json
 {
   "message": "Token Invalid"
 }
 ```
+
 #### `403` - Forbidden
+
 ```json
 {
   "message": "You can't access this"
 }
 ```
+
 #### `404` - NotFound
+
 ```json
 {
   "message": "Can't find User with ID in quarantine"
 }
+- OR -
+{
+  "message": "Quarantine Location with ID  not found"
+}
 ```
----
 
+---
 
 [Back to list of API](#list-of-apis)
 
@@ -887,4 +996,5 @@ note: only `Officer` can access this
   "message": "Internal Server Error"
 }
 ```
+
 ---

@@ -48,6 +48,7 @@ class UserController {
   static async createUser(req, res, next) {
     try {
       let { name, passportNumber, email, password, phoneNumber } = req.body;
+
       const response = await User.create(
         {
           name: name,
@@ -62,6 +63,7 @@ class UserController {
           createType: "user",
         }
       );
+
       res.status(201).json({
         id: response.id,
         name: response.name,
@@ -95,6 +97,7 @@ class UserController {
       if (!acceptedRoles.includes(role)) {
         throw { name: "400", message: "Role is not accepted" };
       }
+
       const response = await User.create(
         {
           name: name,
@@ -110,6 +113,7 @@ class UserController {
           createdBy: req.user.id,
         }
       );
+
       res.status(201).json({
         id: response.id,
         name: response.name,
@@ -141,6 +145,7 @@ class UserController {
       if (!nextStatus) {
         throw { name: "403", message: "You can't change user status" };
       }
+
       const response = await User.update(
         { status: nextStatus },
         {
@@ -210,6 +215,7 @@ class UserController {
           oldRole: user.role,
         }
       );
+
       res.status(200).json({
         id: response[1][0].id,
         name: response[1][0].name,
