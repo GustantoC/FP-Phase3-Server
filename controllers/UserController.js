@@ -48,17 +48,22 @@ class UserController {
   static async createUser(req, res, next) {
     try {
       let { name, passportNumber, email, password, phoneNumber } = req.body;
-      const response = await User.create({
-        name: name,
-        passportNumber: passportNumber,
-        role: "User",
-        email: email,
-        password: password,
-        phoneNumber: phoneNumber,
-        status: "ArrivalProcedure",
-      }, {
-        createType: 'user'
-      });
+
+      const response = await User.create(
+        {
+          name: name,
+          passportNumber: passportNumber,
+          role: "User",
+          email: email,
+          password: password,
+          phoneNumber: phoneNumber,
+          status: "ArrivalProcedure",
+        },
+        {
+          createType: "user",
+        }
+      );
+
       res.status(201).json({
         id: response.id,
         name: response.name,
@@ -92,18 +97,23 @@ class UserController {
       if (!acceptedRoles.includes(role)) {
         throw { name: "400", message: "Role is not accepted" };
       }
-      const response = await User.create({
-        name: name,
-        passportNumber: "Staff",
-        role: role,
-        email: email,
-        password: password,
-        phoneNumber: phoneNumber,
-        status: "Active",
-      }, {
-        createType: 'staff',
-        createdBy: req.user.id
-      });
+
+      const response = await User.create(
+        {
+          name: name,
+          passportNumber: "Staff",
+          role: role,
+          email: email,
+          password: password,
+          phoneNumber: phoneNumber,
+          status: "Active",
+        },
+        {
+          createType: "staff",
+          createdBy: req.user.id,
+        }
+      );
+
       res.status(201).json({
         id: response.id,
         name: response.name,
@@ -172,11 +182,27 @@ class UserController {
       if(nextStatus === "Finished"){
         await QuarantineDetail.update({ isQuarantined: true }, {
           where: {
-            userId: id
+            id: id,
           },
-          fields: ['isQuarantined'],
-          individualHooks: true
-        });
+          fields: ["status"],
+          returning: true,
+          individualHooks: true,
+          updateType: "user",
+          oldStatus: currStatus,
+          updatedBy: req.user.id,
+        }
+      );
+      if (nextStatus === "Finished") {
+        await QuarantineDetail.update(
+          { isQuarantined: true },
+          {
+            where: {
+              userId: id,
+            },
+            fields: ["isQuarantined"],
+            individualHooks: true,
+          }
+        );
       }
       res.status(200).json({
         id: response[1][0].id,
@@ -207,17 +233,21 @@ class UserController {
         throw { name: "404", message: "Can't find user" };
       }
 
-      const response = await User.update({ role: role }, {
-        where: {
-          id: id
-        }, 
-        fields: ['role'],
-        returning: true, 
-        individualHooks: true,
-        updateType: 'staff',
-        updatedBy: req.user.id,
-        oldRole: user.role
-      });
+      const response = await User.update(
+        { role: role },
+        {
+          where: {
+            id: id,
+          },
+          fields: ["role"],
+          returning: true,
+          individualHooks: true,
+          updateType: "staff",
+          updatedBy: req.user.id,
+          oldRole: user.role,
+        }
+      );
+
       res.status(200).json({
         id: response[1][0].id,
         name: response[1][0].name,

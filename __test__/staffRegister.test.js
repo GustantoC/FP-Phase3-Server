@@ -13,7 +13,7 @@ beforeAll((done) => {
     phoneNumber: "111333",
     status: "Active",
   };
-  const uadminCreate = {
+  const adminCreate = {
     name: "DriverWisma",
     email: "DriverWisma@mail.com",
     passportNumber: "657626527",
@@ -24,7 +24,7 @@ beforeAll((done) => {
   };
   User.create(adminLoginTest)
     .then(() => {
-      User.create(uadminCreate);
+      User.create(adminCreate);
       done();
     })
     .catch((err) => {
@@ -114,75 +114,6 @@ describe("POST /staffs, [FAILED  REGISTER CASE] ", () => {
         return done();
       });
   });
-
-  test("Should return status 400 when Email Null", (done) => {
-    const token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-    let emailNull = {
-      ...loginError,
-      email: null,
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(emailNull)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-
-  test("Should return status 400 when password Null", (done) => {
-    const token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-    let passwordNull = {
-      ...loginError,
-      password: null,
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(passwordNull)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-
-  test("Should return status 400 when phoneNumber Null", (done) => {
-    const token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-    let phoneNumberNull = {
-      ...loginError,
-      phoneNumber: null,
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(phoneNumberNull)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
   test("Should return status 400 when Role Null", (done) => {
     const token = TokenHelper.signPayload({
       email: "test1@mail.com",
@@ -197,28 +128,6 @@ describe("POST /staffs, [FAILED  REGISTER CASE] ", () => {
       .set("Accept", "application/json")
       .set("access_token", token)
       .send(roleNumberNull)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-  test("Should return status 400 when Email Failed", (done) => {
-    const token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-    let emailFailed = {
-      ...loginError,
-      email: "DriverWisma1 mail.com",
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(emailFailed)
       .end((err, res) => {
         if (err) return done(err);
         const { status, body } = res;
@@ -249,21 +158,42 @@ describe("POST /staffs, [FAILED  REGISTER CASE] ", () => {
         return done();
       });
   });
-
-  test("Should return status 400 when Password less than 6 character", (done) => {
+  test("Should return status 400 when Email Null", (done) => {
     const token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
     });
-    let roleAcception = {
+    let emailNull = {
       ...loginError,
-      Role: "pass",
+      email: null,
     };
     request(app)
       .post("/staffs")
       .set("Accept", "application/json")
       .set("access_token", token)
-      .send(roleAcception)
+      .send(emailNull)
+      .end((err, res) => {
+        if (err) return done(err);
+        const { status, body } = res;
+        expect(status).toBe(400);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("Should return status 400 when Email Failed", (done) => {
+    const token = TokenHelper.signPayload({
+      email: "test1@mail.com",
+      password: "password",
+    });
+    let emailFailed = {
+      ...loginError,
+      email: "DriverWisma1 mail.com",
+    };
+    request(app)
+      .post("/staffs")
+      .set("Accept", "application/json")
+      .set("access_token", token)
+      .send(emailFailed)
       .end((err, res) => {
         if (err) return done(err);
         const { status, body } = res;
@@ -291,6 +221,72 @@ describe("POST /staffs, [FAILED  REGISTER CASE] ", () => {
       .set("Accept", "application/json")
       .set("access_token", token)
       .send(emailReadyExists)
+      .end((err, res) => {
+        if (err) return done(err);
+        const { status, body } = res;
+        expect(status).toBe(400);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("Should return status 400 when password Null", (done) => {
+    const token = TokenHelper.signPayload({
+      email: "test1@mail.com",
+      password: "password",
+    });
+    let passwordNull = {
+      ...loginError,
+      password: null,
+    };
+    request(app)
+      .post("/staffs")
+      .set("Accept", "application/json")
+      .set("access_token", token)
+      .send(passwordNull)
+      .end((err, res) => {
+        if (err) return done(err);
+        const { status, body } = res;
+        expect(status).toBe(400);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("Should return status 400 when Password less than 6 character", (done) => {
+    const token = TokenHelper.signPayload({
+      email: "test1@mail.com",
+      password: "password",
+    });
+    let roleAcception = {
+      ...loginError,
+      Role: "pass",
+    };
+    request(app)
+      .post("/staffs")
+      .set("Accept", "application/json")
+      .set("access_token", token)
+      .send(roleAcception)
+      .end((err, res) => {
+        if (err) return done(err);
+        const { status, body } = res;
+        expect(status).toBe(400);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("Should return status 400 when phoneNumber Null", (done) => {
+    const token = TokenHelper.signPayload({
+      email: "test1@mail.com",
+      password: "password",
+    });
+    let phoneNumberNull = {
+      ...loginError,
+      phoneNumber: null,
+    };
+    request(app)
+      .post("/staffs")
+      .set("Accept", "application/json")
+      .set("access_token", token)
+      .send(phoneNumberNull)
       .end((err, res) => {
         if (err) return done(err);
         const { status, body } = res;
