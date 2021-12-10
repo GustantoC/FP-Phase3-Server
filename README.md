@@ -142,24 +142,32 @@
 | Query  | Type     | Description                  |
 | :----- | :------- | :--------------------------- |
 | `role` | `string` | **Optional**. Query the role |
+| `page`         | `integer` | Page of data          |
+| `size`         | `integer` | Size of data          |
 
 ### Response
 
 #### `200` - OK
 
 ```json
-[
-  {
-    "id": "integer",
-    "name": "string",
-    "passportNumber": "string",
-    "role": |> One of the list of Roles <|,
-    "email": "string",
-    "phoneNumber": "string",
-    "status": |> One of the list of Status <|
-  },
-  ...
-]
+{
+  "totalItems": "integer",
+  "pageData": [
+    {
+      "id": "integer",
+      "name": "string",
+      "passportNumber": "string",
+      "role": |> One of the list of Roles <|,
+      "email": "string",
+      "phoneNumber": "string",
+      "status": |> One of the list of Status <|
+    },
+    ...
+  ],
+  "totalPages": "integer",
+  "currentPage": "integer"
+}
+
 ```
 
 ---
@@ -615,7 +623,7 @@ Note: Only staff with role `admin` can access this
 ```json
 {
   "totalItems": "integer",
-  "histories":
+  "pageData":
   [
     {
       "id": "integer",
@@ -686,7 +694,7 @@ Note: Only staff with role `admin` can access this
 ```json
 {
   "totalItems": "integer",
-  "locations": [
+  "pageData": [
     {
       "id": "integer",
       "name": "string",
