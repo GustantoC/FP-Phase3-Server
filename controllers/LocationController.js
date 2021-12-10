@@ -1,5 +1,5 @@
 const { QuarantineLocation, QuarantineDetail, User } = require('../models')
-
+const { getPagination, getPagingData } = require("../helpers/PaginationHelper")
 
 class LocationController {
   //POST QuarantineLocation = Yang diisi oleh admin doang
@@ -67,10 +67,14 @@ class LocationController {
   //GET All location
   static async getAllLocations(req, res, next) {
     try {
-      const locations = await QuarantineLocation.findAll({
+      let { page, size } = req.query;
+      const { limit, offset } = getPagination(page, size);
+      const locations = await QuarantineLocation.findAndCountAll({
+        limit,
+        offset,
         attributes: ['id', 'name', 'address', 'type']
       })
-      res.status(200).json(locations)
+      res.status(200).json(getPagingData(locations, page, limit))
     } catch (error) {
       next(error)
     }

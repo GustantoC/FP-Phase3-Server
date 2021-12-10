@@ -50,7 +50,7 @@ module.exports = (sequelize, DataTypes) => {
       afterCreate: async (instance, options) => {
         let descriptionText = `New Quarantine Detail created for ${instance.userId}`;
         let historyObj = {
-          userId: instance.id,
+          userId: instance.userId,
           updatedBy: options.createdBy,
           description: descriptionText,
         }
@@ -60,7 +60,7 @@ module.exports = (sequelize, DataTypes) => {
         let descriptionText = `Quarantine for ${instance.userId} updated to: `;
 
         if (instance.locationId) {
-          descriptionText += `LocaionId: ${options.locationName};`;
+          descriptionText += `LocaionId: ${instance.locationId};`;
         }
         if(instance.roomNumber) {
           descriptionText += `Room Number: ${instance.roomNumber};`;
@@ -78,7 +78,7 @@ module.exports = (sequelize, DataTypes) => {
           descriptionText += `Is Quarantined!`;
         }
         let historyObj = {
-          userId: options.createdBy,
+          userId: instance.userId,
           updatedBy: options.createdBy,
           description: descriptionText,
         }
