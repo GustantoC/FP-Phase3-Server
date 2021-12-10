@@ -100,6 +100,7 @@
 ````json
 [
   {
+    "role": |> One of the list of Status <|,
     "access_token": "string"
   }
 ]
@@ -340,6 +341,10 @@ and `status` of `ArrivalProcedure`
 ```json
 {
   "message": "Can't find user"
+}
+- OR - 
+{
+  "message": "User not on active quarantine"
 }
 ```
 
@@ -608,7 +613,16 @@ Note: Only staff with role `admin` can access this
     "updatedBy": "integer",
     "description": "string",
     "createdAt": "dateTime",
-    "updatedAt": "dateTime"
+    "updatedUser": { //from userId
+      "id": "integer",
+      "name": "string",
+      "email": "string"
+    },
+    "updater": { //from updatedBy
+      "id": "integer",
+      "name": "string",
+      "email": "string"
+    }
   },
   ...
 ]

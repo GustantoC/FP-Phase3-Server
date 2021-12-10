@@ -53,7 +53,7 @@ class TripController {
       }, {
         createdBy: req.user.id
       });
-      await userData.update({
+      await User.update({
         status: 'ArrivalProcedure'
       }, {
         where: {
@@ -71,6 +71,7 @@ class TripController {
         tripDestination
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
