@@ -180,7 +180,6 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
           .send(role)
           .then((res) => {
             const { status, body } = res;
-            console.log(body, "<<<<<<<<<<<===================");
             expect(status).toBe(404);
             expect(body).toHaveProperty("message", expect.any(String));
             return done();
