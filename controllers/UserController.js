@@ -133,7 +133,6 @@ class UserController {
     try {
       let { id } = req.params;
       const user = await User.findByPk(id);
-
       if (!user) {
         throw { name: "404", message: "Can't find user" };
       }
