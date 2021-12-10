@@ -2,6 +2,11 @@
 
 ## List of APIs
 
+Note: if `size` in pagination query is not defined   
+then the default value is:
+`size` = 4  
+`page` = 1  
+
 #### Login
 
 | Type   | Path     | Description               |
