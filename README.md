@@ -601,12 +601,12 @@ and `status` of `Active`
 
 Note: Only staff with role `admin` can access this
 
-| Query   | Type      | Description           |
-| :------ | :-------- | :-------------------- |
-| `email` | `string`  | Email of updated user |
+| Query          | Type      | Description           |
+| :------------- | :-------- | :-------------------- |
+| `email`        | `string`  | Email of updated user |
 | `emailUpdater` | `string`  | Email of updated user |
-| `page`  | `integer` | Page of data          |
-| `size`  | `integer` | Size of data          |
+| `page`         | `integer` | Page of data          |
+| `size`         | `integer` | Size of data          |
 
 ### Response
 
@@ -674,20 +674,31 @@ Note: Only staff with role `admin` can access this
 | :------------- | :------- | :------------------------------ |
 | `access_token` | `string` | **Required**. Your access_token |
 
+
+| Query          | Type      | Description           |
+| :------------- | :-------- | :-------------------- |
+| `page`         | `integer` | Page of data          |
+| `size`         | `integer` | Size of data          |
 ### Response
 
 #### `200` - OK
 
 ```json
-[
-  {
-    "id": "integer",
-    "name": "string",
-    "address": "string",
-    "type": "Wisma" || "Hotel"
-  },
-  ...
-]
+{
+  "totalItems": "integer",
+  "locations": [
+    {
+      "id": "integer",
+      "name": "string",
+      "address": "string",
+      "type": "Wisma" || "Hotel"
+    },
+    ...
+  ],
+  "totalPages": "integer",
+  "currentPage": "integer"
+}
+
 ```
 
 ---
