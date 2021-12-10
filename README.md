@@ -48,10 +48,10 @@
 
 ### Quarantine
 
-| Type   | Path                               | Description                                                                    |
-| :----- | :--------------------------------- | :----------------------------------------------------------------------------- |
-| `GET`  | '/quarantines'                     | [Get quarantineDetails for userId](#get-quarantinedetail-for-userId)           |
-| `PUT`  | '/quarantines/:userId'             | [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user)      |
+| Type  | Path                   | Description                                                               |
+| :---- | :--------------------- | :------------------------------------------------------------------------ |
+| `GET` | '/quarantines'         | [Get quarantineDetails for userId](#get-quarantinedetail-for-userId)      |
+| `PUT` | '/quarantines/:userId' | [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user) |
 
 ### List of Roles
 
@@ -342,7 +342,7 @@ and `status` of `ArrivalProcedure`
 {
   "message": "Can't find user"
 }
-- OR - 
+- OR -
 {
   "message": "User not on active quarantine"
 }
@@ -601,31 +601,45 @@ and `status` of `Active`
 
 Note: Only staff with role `admin` can access this
 
+| Query   | Type      | Description           |
+| :------ | :-------- | :-------------------- |
+| `email` | `string`  | Email of updated user |
+| `emailUpdater` | `string`  | Email of updated user |
+| `page`  | `integer` | Page of data          |
+| `size`  | `integer` | Size of data          |
+
 ### Response
 
 #### `200` - OK
 
 ```json
-[
-  {
-    "id": "integer",
-    "userId": "integer",
-    "updatedBy": "integer",
-    "description": "string",
-    "createdAt": "dateTime",
-    "updatedUser": { //from userId
+{
+  "totalItems": "integer",
+  "histories":
+  [
+    {
       "id": "integer",
-      "name": "string",
-      "email": "string"
+      "userId": "integer",
+      "updatedBy": "integer",
+      "description": "string",
+      "createdAt": "dateTime",
+      "updatedUser": { //from userId
+        "id": "integer",
+        "name": "string",
+        "email": "string"
+      },
+      "updater": { //from updatedBy
+        "id": "integer",
+        "name": "string",
+        "email": "string"
+      }
     },
-    "updater": { //from updatedBy
-      "id": "integer",
-      "name": "string",
-      "email": "string"
-    }
-  },
-  ...
-]
+    ...
+  ],
+  "totalPages": "integer",
+  "currentPage": "integer"
+}
+
 ```
 
 ### Error
@@ -643,70 +657,6 @@ Note: Only staff with role `admin` can access this
 ```json
 {
   "message": "You can't access this"
-}
-```
-
----
-
-# Get history by userId
-
-[Back to list of API](#list-of-apis)
-
-```http
-  GET /histories/:userId
-```
-
-| Header         | Type     | Description                     |
-| :------------- | :------- | :------------------------------ |
-| `access_token` | `string` | **Required**. Your access_token |
-
-Note: Only staff with role `admin` can access this
-
-| Parameter | Type     | Description                                  |
-| :-------- | :------- | :------------------------------------------- |
-| `userId`  | `intger` | **Required**. UserID of the history to check |
-
-### Response
-
-#### `200` - OK
-
-```json
-[
-  {
-    "id": "integer",
-    "userId": "integer",
-    "updatedBy": "integer",
-    "description": "string",
-    "createdAt": "dateTime",
-    "updatedAt": "dateTime"
-  },
-  ...
-]
-```
-
-### Error
-
-#### `401` - Unauthorized
-
-```json
-{
-  "message": "Token Invalid"
-}
-```
-
-#### `403` - Forbidden
-
-```json
-{
-  "message": "You can't access this"
-}
-```
-
-#### `404` - NotFound
-
-```json
-{
-  "message": "Can't find user"
 }
 ```
 
@@ -922,7 +872,7 @@ note again : The data is based on the user accessing this
 
 ```json
 {
-  "message": "Can't find any data" 
+  "message": "Can't find any data"
 }
 ```
 
@@ -946,13 +896,13 @@ note: only `Officer(s)` can access this
 | :-------- | :-------- | :---------------------------------------------- |
 | `userId`  | `integer` | **Required**. Id of user that wants to be added |
 
-| Body              | Type     | Description          |
-| :---------------- | :------- | :------------------- |
-| `locationId`      | `integer` | LocationID to add   |
-| `roomNumber`      | `string` | Room Number to add   |
-| `quarantineUntil` | `date`   | Quarantine date ends |
-| `tripOrigin`      | `string` | Trip Origin          |
-| `tripDestination` | `string` | Trip Destination     |
+| Body              | Type      | Description          |
+| :---------------- | :-------- | :------------------- |
+| `locationId`      | `integer` | LocationID to add    |
+| `roomNumber`      | `string`  | Room Number to add   |
+| `quarantineUntil` | `date`    | Quarantine date ends |
+| `tripOrigin`      | `string`  | Trip Origin          |
+| `tripDestination` | `string`  | Trip Destination     |
 
 ### Response
 
