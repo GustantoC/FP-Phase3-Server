@@ -1,5 +1,30 @@
 const { QuarantineLocation, QuarantineDetail, User } = require('../models')
 
+const getPagination = (page, size) => {
+  if (page <= 0) {
+    page = 1;
+  }
+  if (size <= 0) {
+    size = 0
+  }
+  page--
+  const limit = size ? +size : 4;
+  const offset = page ? page * limit : 0;
+
+  return { limit, offset };
+};
+
+
+const getPagingData = (data, page, limit) => {
+  if (page <= 0) {
+    page = 1;
+  }
+  const { count: totalItems, rows: locations } = data;
+  let currentPage = page ? +page : 1;
+  const totalPages = Math.ceil(totalItems / limit);
+
+  return { totalItems, locations, totalPages, currentPage };
+};
 
 class LocationController {
   //POST QuarantineLocation = Yang diisi oleh admin doang
@@ -67,10 +92,14 @@ class LocationController {
   //GET All location
   static async getAllLocations(req, res, next) {
     try {
-      const locations = await QuarantineLocation.findAll({
+      let { page, size } = req.query;
+      const { limit, offset } = getPagination(page, size);
+      const locations = await QuarantineLocation.findAndCountAll({
+        limit,
+        offset,
         attributes: ['id', 'name', 'address', 'type']
       })
-      res.status(200).json(locations)
+      res.status(200).json(getPagingData(locations, page, limit))
     } catch (error) {
       next(error)
     }
