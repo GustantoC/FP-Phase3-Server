@@ -1,7 +1,7 @@
 const PasswordHelper = require('../helpers/PasswordHelper');
 const TokenHelper = require('../helpers/TokenHelper');
 const acceptedRoles = require('../helpers/AcceptedStaffRoles');
-const { User, QuarantineDetail } = require('../models');
+const { User, QuarantineDetail, QuarantineLocation } = require('../models');
 const progressStatus = require('../helpers/ProgressStatus');
 
 class UserController {
@@ -123,7 +123,6 @@ class UserController {
     try {
       let { id } = req.params;
       const user = await User.findByPk(id);
-
       if (!user) {
         throw { name: "404", message: "Can't find user" };
       }
@@ -135,8 +134,31 @@ class UserController {
       if (!nextStatus) {
         throw { name: "403", message: "You can't change user status" };
       }
-      //Check driver wisma or hotel
-      //check officer wisma or hotel
+
+      const quarantineDetail = await QuarantineDetail.findOne({
+        where: {
+          userId: id,
+          isQuarantined: false,
+        },
+      });
+      if (!quarantineDetail) {
+        throw { name: "404", message: "User not on active quarantine" };
+      }
+
+      const currentLocation = await QuarantineLocation.findByPk(quarantineDetail.locationId);
+      if(req.user.role == 'DriverWisma' && currentLocation.type !== 'Wisma') {
+        throw { name: "403", message: "You can't change user status" };
+      }
+      if(req.user.role == 'DriverHotel' && currentLocation.type !== 'Hotel') {
+        throw { name: "403", message: "You can't change user status" };
+      }
+      if(req.user.role == 'OfficerWisma' && currentLocation.type !== 'Wisma') {
+        throw { name: "403", message: "You can't change user status" };
+      }
+      if(req.user.role == 'OfficerHotel' && currentLocation.type !== 'Hotel') {
+        throw { name: "403", message: "You can't change user status" };
+      }
+
       const response = await User.update({ status: nextStatus }, {
         where: {
           id: id
