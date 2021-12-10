@@ -156,30 +156,31 @@ class UserController {
       }
 
       const currentLocation = await QuarantineLocation.findByPk(quarantineDetail.locationId);
-      if(req.user.role == 'DriverWisma' && currentLocation.type !== 'Wisma') {
+      if (req.user.role == 'DriverWisma' && currentLocation.type !== 'Wisma') {
         throw { name: "403", message: "You can't change user status" };
       }
-      if(req.user.role == 'DriverHotel' && currentLocation.type !== 'Hotel') {
+      if (req.user.role == 'DriverHotel' && currentLocation.type !== 'Hotel') {
         throw { name: "403", message: "You can't change user status" };
       }
-      if(req.user.role == 'OfficerWisma' && currentLocation.type !== 'Wisma') {
+      if (req.user.role == 'OfficerWisma' && currentLocation.type !== 'Wisma') {
         throw { name: "403", message: "You can't change user status" };
       }
-      if(req.user.role == 'OfficerHotel' && currentLocation.type !== 'Hotel') {
+      if (req.user.role == 'OfficerHotel' && currentLocation.type !== 'Hotel') {
         throw { name: "403", message: "You can't change user status" };
       }
 
       const response = await User.update({ status: nextStatus }, {
         where: {
           id: id
-        }, 
+        },
         fields: ['status'],
-        returning: true, 
+        returning: true,
         individualHooks: true,
         updateType: 'user',
-        updatedBy: req.user.email
+        updatedBy: req.user.id
       });
-      if(nextStatus === "Finished"){
+
+      if (nextStatus === "Finished") {
         await QuarantineDetail.update({ isQuarantined: true }, {
           where: {
             id: id,
@@ -190,19 +191,7 @@ class UserController {
           updateType: "user",
           oldStatus: currStatus,
           updatedBy: req.user.id,
-        }
-      );
-      if (nextStatus === "Finished") {
-        await QuarantineDetail.update(
-          { isQuarantined: true },
-          {
-            where: {
-              userId: id,
-            },
-            fields: ["isQuarantined"],
-            individualHooks: true,
-          }
-        );
+        });
       }
       res.status(200).json({
         id: response[1][0].id,
@@ -214,9 +203,11 @@ class UserController {
         status: response[1][0].status,
       });
     } catch (error) {
+      console.log(error);
       next(error);
     }
   }
+
 
   //PUT Role Staff
   static async changeStaffRole(req, res, next) {
