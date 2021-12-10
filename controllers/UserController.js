@@ -177,7 +177,7 @@ class UserController {
         returning: true, 
         individualHooks: true,
         updateType: 'user',
-        updatedBy: req.user.id
+        updatedBy: req.user.email
       });
       if(nextStatus === "Finished"){
         await QuarantineDetail.update({ isQuarantined: true }, {
@@ -287,6 +287,7 @@ class UserController {
           role: user.role,
         });
         res.status(200).json({
+          role: user.role,
           access_token: token,
         });
       }

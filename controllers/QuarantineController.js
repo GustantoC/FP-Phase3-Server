@@ -15,6 +15,7 @@ class QuarantineController {
           throw { name: '403', message: 'You can\'t access this' }
         }
         const checkLocation = await QuarantineLocation.findByPk(locationId)
+        
         if (!checkLocation) {
           throw { name: '404', message: `Quarantine Location with ID ${locationId} not found` }
         }
@@ -43,8 +44,7 @@ class QuarantineController {
         fields: ['locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination'],
         returning: true,
         individualHooks: true,
-        createdBy: req.user.id,
-        locationName: checkLocation.name
+        createdBy: req.user.id
       })
       res.status(200).json({
         id: response[1][0].id,
@@ -56,8 +56,8 @@ class QuarantineController {
         tripDestination: response[1][0].tripDestination,
         isQuarantined: response[1][0].isQuarantined,
       })
-
     } catch (error) {
+      console.log(error)
       next(error)
     }
 
