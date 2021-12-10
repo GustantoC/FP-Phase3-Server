@@ -51,7 +51,6 @@ describe("GET /users ", () => {
     let access_token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
-      role: "User",
     });
     request(app)
       .get("/users")
