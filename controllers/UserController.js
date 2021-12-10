@@ -3,15 +3,24 @@ const TokenHelper = require('../helpers/TokenHelper');
 const acceptedRoles = require('../helpers/AcceptedStaffRoles');
 const { User, QuarantineDetail, QuarantineLocation } = require('../models');
 const progressStatus = require('../helpers/ProgressStatus');
-
+const { getPagination, getPagingData } = require("../helpers/PaginationHelper");
+const { Op } = require('sequelize');
 class UserController {
   //GET All User ()
   static async getAllUsers(req, res, next) {
     try {
       let { role } = req.query;
-      let options = {};
+      let { page, size } = req.query;
+      const { limit, offset } = getPagination(page, size);
+      let options = {
+        [Op.and]: [
+          { role: { [Op.ne]: "User" } },
+        ]
+      }
       if (role) options = { role: role };
-      const response = await User.findAll({
+      const response = await User.findAndCountAll({
+        limit,
+        offset,
         where: options,
         attributes: {
           exclude: ["password", "createdAt", "updatedAt"],
@@ -20,7 +29,7 @@ class UserController {
       if (response.length === 0) {
         throw { name: "404", message: "Can't find user" };
       }
-      res.status(200).json(response);
+      res.status(200).json(getPagingData(response, page, limit));
     } catch (error) {
       next(error);
     }
