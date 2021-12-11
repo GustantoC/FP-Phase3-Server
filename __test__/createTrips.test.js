@@ -4,6 +4,16 @@ const { User, QuarantineDetail } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
 
 beforeAll((done) => {
+  const adminLoginTest = {
+    name: "test",
+    passportNumber: "09437410364326",
+    role: "Admin",
+    email: "test1@mail.com",
+    password: "password",
+    phoneNumber: "111333",
+    status: "Active",
+  };
+
   const userTest = {
     name: "testuser",
     passportNumber: "9804535",
@@ -13,22 +23,17 @@ beforeAll((done) => {
     phoneNumber: "4532461",
     status: "ArrivalProcedure",
   };
-  const dummyQuarantineDetail = {
+  const newTrip = {
     userId: 1,
     tripOrigin: "Jerman",
     tripDestination: "Berlin",
     isQuarantined: false,
   };
-  User.create(userTest)
-    .then(() => {
-      QuarantineDetail.create(dummyQuarantineDetail);
-    })
-    .then(() => {
-      done();
-    })
-    .catch((err) => {
-      done(err);
-    });
+  User.destroy({ truncate: true, cascade: true, restartIdentity: true })
+    .then(() => User.create(adminLoginTest))
+    .then(() => User.create(userTest))
+    .then(() => done())
+    .catch((err) => done(err));
 });
 
 afterAll((done) => {
@@ -50,26 +55,115 @@ afterAll((done) => {
 
 describe("POST /trips ", () => {
   test(" 201, should be return some object  [SUCCES POST DATA TRIP]", (done) => {
-    let access_token = TokenHelper.signPayload({
+    const tokenUser = TokenHelper.signPayload({
       email: "testUser@mail.com",
       password: "password",
     });
-    const trip = {
+    const newTrip = {
       userId: 1,
-      tripOrigin: "Belanda",
-      tripDestination: "Den Haag",
+      tripOrigin: "Jerman",
+      tripDestination: "Berlin",
       isQuarantined: false,
     };
     request(app)
       .post("/trips")
-      .send(trip)
       .set("Accept", "application/json")
-      .set("access_token", access_token)
+      .set("access_token", tokenUser)
+      .send(newTrip)
       .then((err, res) => {
         if (err) return done(err);
-        const { body, status } = res;
-        console.log(body, status, "<<<<<<<<<<<=================");
+        const { status, body } = res;
+        console.log(status, body, "<<<<<<<<<<<<<================");
         return done();
+      });
+  });
+});
+
+let newTripError = {
+  userId: 1,
+  tripOrigin: "Jerman",
+  tripDestination: "Berlin",
+  isQuarantined: false,
+};
+
+describe("POST /trips", () => {
+  test("400, should be return message  [FAILED POST DATA TRIP] where tripOrigin: null", (done) => {
+    let tripOriginNull = {
+      ...newTripError,
+      tripOrigin: null,
+    };
+    const tokenUser = TokenHelper.signPayload({
+      email: "testUser@mail.com",
+      password: "password",
+    });
+    request(app)
+      .post("/trips")
+      .set("Accept", "application/json")
+      .set("access_token", tokenUser)
+      .send(tripOriginNull)
+      .then((res) => {
+        const { status, body } = res;
+        expect(status).toBe(400);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("400, should be return message  [FAILED POST DATA TRIP] where tripDestination: null", (done) => {
+    let tripDestinationNull = {
+      ...newTripError,
+      tripDestination: null,
+    };
+    const tokenUser = TokenHelper.signPayload({
+      email: "testUser@mail.com",
+      password: "password",
+    });
+    request(app)
+      .post("/trips")
+      .set("Accept", "application/json")
+      .set("access_token", tokenUser)
+      .send(tripDestinationNull)
+      .then((res) => {
+        const { status, body } = res;
+        expect(status).toBe(400);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("400, should be return message  [FAILED POST DATA TRIP] where Role Not 'User'", (done) => {
+    const token = TokenHelper.signPayload({
+      email: "test1@mail.com",
+      password: "password",
+    });
+    const official = {
+      name: "OfficerAirport",
+      passportNumber: "462752625727",
+      email: "OfficerAirport@mail.com",
+      password: "password",
+      phoneNumber: "236234632632",
+      role: "OfficerAirport",
+      status: "Active",
+    };
+    request(app)
+      .post("/staffs")
+      .set("Accept", "application/json")
+      .set("access_token", token)
+      .send(official)
+      .then(() => {
+        let tokenOfficer = TokenHelper.signPayload({
+          email: "OfficerAirport@mail.com",
+          password: "password",
+        });
+        return request(app)
+          .post("/trips")
+          .set("Accept", "application/json")
+          .set("access_token", tokenOfficer)
+          .send(newTripError)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(403);
+            expect(body).toHaveProperty("message", expect.any(String));
+            return done();
+          });
       });
   });
 });

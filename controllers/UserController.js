@@ -132,6 +132,7 @@ class UserController {
   static async changeStatus(req, res, next) {
     try {
       let { id } = req.params;
+      console.log(req.user.role, "ini role admin");
       const user = await User.findByPk(id);
       if (!user) {
         throw { name: "404", message: "Can't find user" };

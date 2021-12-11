@@ -114,12 +114,12 @@ beforeAll((done) => {
       status: "2nd Swab",
     },
     {
-      name: "SwabKedua1",
-      passportNumber: "465473583",
+      name: "user1",
+      passportNumber: "76382571276383",
       role: "User",
-      email: "SwabKedua1@mail.com",
+      email: "user1@mail.com",
       password: "password",
-      phoneNumber: "462365478",
+      phoneNumber: "547485227658386",
       status: "2nd Swab",
     },
   ];
@@ -171,7 +171,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -217,7 +217,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -263,7 +263,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -317,7 +317,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -372,7 +372,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -426,7 +426,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -480,7 +480,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -534,7 +534,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -588,7 +588,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -642,7 +642,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .put("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -671,15 +671,15 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           });
       });
   });
-  test(" 200, Should return user with status: 'Finished' when role officer: OfficerHotel", (done) => {
+  test(" 200, Should return user with status: '2nd Swab' when role officer: HealthOfficial", (done) => {
     const token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
     });
     let officerHotel = {
-      name: "officerHotel",
+      name: "OfficerHotel",
       passportNumber: "462752625727",
-      email: "officerHotel@mail.com",
+      email: "OfficerHotel@mail.com",
       password: "password",
       phoneNumber: "236234632632",
       role: "OfficerHotel",
@@ -691,88 +691,26 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
       .set("access_token", token)
       .send(officerHotel)
       .then(() => {
-        const loginOfficer = {
-          email: "officerHotel@mail.com",
+        const loginOfficerHotel = {
+          email: "OfficerHotel@mail.com",
           password: "password",
         };
         return request(app)
-          .get("/login")
-          .send(loginOfficer)
+          .post("/login")
+          .send(loginOfficerHotel)
           .then(() => {
-            let tokenOfficer = TokenHelper.signPayload({
-              email: "officerHotel@mail.com",
+            let tokenOfficerHotel = TokenHelper.signPayload({
+              email: "OfficerHotel@mail.com",
               password: "password",
             });
             return request(app)
-              .put("/users/12")
+              .put("/users/11")
               .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
+              .set("access_token", tokenOfficerHotel)
+              .then((err, res) => {
+                if (err) return done(err);
                 const { status, body } = res;
-                console.log(
-                  body,
-                  status,
-                  "<<<<<<<<<<<<==================  2nd Swab to finish"
-                );
-                expect(status).toBe(200);
-                // expect(body).toHaveProperty("id", expect.any(Number));
-                // expect(body).toHaveProperty("name", expect.any(String));
-                // expect(body).toHaveProperty(
-                //   "passportNumber",
-                //   expect.any(String)
-                // );
-                // expect(body).toHaveProperty("role", expect.any(String));
-                // expect(body).toHaveProperty("email", expect.any(String));
-                // expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                // expect(body).toHaveProperty("status", expect.any(String));
-                return done();
-              });
-          });
-      });
-  });
-  test(" 200, Should return user with status: 'Finished' when role officer: OfficerWisma", (done) => {
-    const token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-    let officerHotel = {
-      name: "officerHotel",
-      passportNumber: "462752625727",
-      email: "officerHotel@mail.com",
-      password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerHotel",
-      status: "Active",
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(officerHotel)
-      .then(() => {
-        const loginOfficer = {
-          email: "officerHotel@mail.com",
-          password: "password",
-        };
-        return request(app)
-          .get("/login")
-          .send(loginOfficer)
-          .then(() => {
-            let tokenOfficer = TokenHelper.signPayload({
-              email: "officerHotel@mail.com",
-              password: "password",
-            });
-            return request(app)
-              .put("/users/13")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                console.log(
-                  body,
-                  status,
-                  "<<<<<<<<<<<<==================  2nd Swab to finish"
-                );
+                console.log(status, body, "<<<<<========================");
                 expect(status).toBe(200);
                 // expect(body).toHaveProperty("id", expect.any(Number));
                 // expect(body).toHaveProperty("name", expect.any(String));
@@ -809,7 +747,7 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let invalidToken =
@@ -853,7 +791,7 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -890,7 +828,7 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
           password: "password",
         };
         return request(app)
-          .get("/login")
+          .post("/login")
           .send(loginOfficer)
           .then(() => {
             let tokenOfficer = TokenHelper.signPayload({
@@ -905,7 +843,6 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
                 const { status, body } = res;
                 expect(status).toBe(404);
                 expect(body).toHaveProperty("message", expect.any(String));
-
                 return done();
               });
           });
