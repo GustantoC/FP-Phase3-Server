@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../app");
-const { User } = require("../models");
+const { User, QuarantineDetail } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
 
 beforeAll((done) => {
@@ -13,7 +13,16 @@ beforeAll((done) => {
     phoneNumber: "4532461",
     status: "ArrivalProcedure",
   };
+  const dummyQuarantineDetail = {
+    userId: 1,
+    tripOrigin: "Jerman",
+    tripDestination: "Berlin",
+    isQuarantined: false,
+  };
   User.create(userTest)
+    .then(() => {
+      QuarantineDetail.create(dummyQuarantineDetail);
+    })
     .then(() => {
       done();
     })
@@ -23,12 +32,15 @@ beforeAll((done) => {
 });
 
 afterAll((done) => {
-  User.destroy({
-    truncate: true,
-    cascade: true,
-    restartIdentity: true,
-  })
+  User.destroy({ truncate: true, cascade: true, restartIdentity: true })
     .then(() => {
+      return QuarantineDetail.destroy({
+        truncate: true,
+        cascade: true,
+        restartIdentity: true,
+      });
+    })
+    .then((_) => {
       done();
     })
     .catch((err) => {
@@ -42,23 +54,21 @@ describe("POST /trips ", () => {
       email: "testUser@mail.com",
       password: "password",
     });
-    const payload = {
+    const trip = {
+      userId: 1,
       tripOrigin: "Belanda",
       tripDestination: "Den Haag",
+      isQuarantined: false,
     };
     request(app)
       .post("/trips")
+      .send(trip)
       .set("Accept", "application/json")
       .set("access_token", access_token)
-      .send(payload)
-      .end((err, res) => {
+      .then((err, res) => {
         if (err) return done(err);
-        const { status, body } = res;
-        console.log(body, ",<<<<=====");
-        expect(status).toBe(201);
-        expect(body).toHaveProperty("id", expect.any(Number));
-        expect(body).toHaveProperty("tripOrigin", expect.any(String));
-        expect(body).toHaveProperty("tripDestination", expect.any(String));
+        const { body, status } = res;
+        console.log(body, status, "<<<<<<<<<<<=================");
         return done();
       });
   });

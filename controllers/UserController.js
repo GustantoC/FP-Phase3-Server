@@ -1,26 +1,17 @@
-const PasswordHelper = require('../helpers/PasswordHelper');
-const TokenHelper = require('../helpers/TokenHelper');
-const acceptedRoles = require('../helpers/AcceptedStaffRoles');
-const { User, QuarantineDetail, QuarantineLocation } = require('../models');
-const progressStatus = require('../helpers/ProgressStatus');
-const { getPagination, getPagingData } = require("../helpers/PaginationHelper");
-const { Op } = require('sequelize');
+const PasswordHelper = require("../helpers/PasswordHelper");
+const TokenHelper = require("../helpers/TokenHelper");
+const acceptedRoles = require("../helpers/AcceptedStaffRoles");
+const { User, QuarantineDetail } = require("../models");
+const progressStatus = require("../helpers/ProgressStatus");
+
 class UserController {
   //GET All User ()
   static async getAllUsers(req, res, next) {
     try {
       let { role } = req.query;
-      let { page, size } = req.query;
-      const { limit, offset } = getPagination(page, size);
-      let options = {
-        [Op.and]: [
-          { role: { [Op.ne]: "User" } },
-        ]
-      }
+      let options = {};
       if (role) options = { role: role };
-      const response = await User.findAndCountAll({
-        limit,
-        offset,
+      const response = await User.findAll({
         where: options,
         attributes: {
           exclude: ["password", "createdAt", "updatedAt"],
@@ -29,7 +20,7 @@ class UserController {
       if (response.length === 0) {
         throw { name: "404", message: "Can't find user" };
       }
-      res.status(200).json(getPagingData(response, page, limit));
+      res.status(200).json(response);
     } catch (error) {
       next(error);
     }
@@ -154,43 +145,9 @@ class UserController {
         throw { name: "403", message: "You can't change user status" };
       }
 
-      const quarantineDetail = await QuarantineDetail.findOne({
-        where: {
-          userId: id,
-          isQuarantined: false,
-        },
-      });
-      if (!quarantineDetail) {
-        throw { name: "404", message: "User not on active quarantine" };
-      }
-
-      const currentLocation = await QuarantineLocation.findByPk(quarantineDetail.locationId);
-      if (req.user.role == 'DriverWisma' && currentLocation.type !== 'Wisma') {
-        throw { name: "403", message: "You can't change user status" };
-      }
-      if (req.user.role == 'DriverHotel' && currentLocation.type !== 'Hotel') {
-        throw { name: "403", message: "You can't change user status" };
-      }
-      if (req.user.role == 'OfficerWisma' && currentLocation.type !== 'Wisma') {
-        throw { name: "403", message: "You can't change user status" };
-      }
-      if (req.user.role == 'OfficerHotel' && currentLocation.type !== 'Hotel') {
-        throw { name: "403", message: "You can't change user status" };
-      }
-
-      const response = await User.update({ status: nextStatus }, {
-        where: {
-          id: id
-        },
-        fields: ['status'],
-        returning: true,
-        individualHooks: true,
-        updateType: 'user',
-        updatedBy: req.user.id
-      });
-
-      if (nextStatus === "Finished") {
-        await QuarantineDetail.update({ isQuarantined: true }, {
+      const response = await User.update(
+        { status: nextStatus },
+        {
           where: {
             id: id,
           },
@@ -200,7 +157,19 @@ class UserController {
           updateType: "user",
           oldStatus: currStatus,
           updatedBy: req.user.id,
-        });
+        }
+      );
+      if (nextStatus === "Finished") {
+        await QuarantineDetail.update(
+          { isQuarantined: true },
+          {
+            where: {
+              userId: id,
+            },
+            fields: ["isQuarantined"],
+            individualHooks: true,
+          }
+        );
       }
       res.status(200).json({
         id: response[1][0].id,
@@ -212,11 +181,9 @@ class UserController {
         status: response[1][0].status,
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
-
 
   //PUT Role Staff
   static async changeStaffRole(req, res, next) {
@@ -265,7 +232,6 @@ class UserController {
   //POST /login
   static async Login(req, res, next) {
     try {
-      console.log(req.body);
       const { email, password } = req.body;
       if (!email) {
         throw { name: "400", message: "Email is required" };
@@ -278,19 +244,20 @@ class UserController {
           email: email,
         },
       });
-      if (!user || !PasswordHelper.comparePassword(password, user.password)) {
-        throw { name: "400", message: "Invalid email or password" };
-      } else {
-        let token = TokenHelper.signPayload({
-          id: user.id,
-          email: user.email,
-          role: user.role,
-        });
-        res.status(200).json({
-          role: user.role,
-          access_token: token,
-        });
+      if (!user) {
+        throw { name: "401", message: "Unauthorized" };
       }
+      if (!PasswordHelper.comparePassword(password, user.password)) {
+        throw { name: "400", message: "Invalid email or password" };
+      }
+      let token = TokenHelper.signPayload({
+        id: user.id,
+        email: user.email,
+        role: user.role,
+      });
+      res.status(200).json({
+        access_token: token,
+      });
     } catch (error) {
       next(error);
     }

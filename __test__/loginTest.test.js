@@ -91,14 +91,14 @@ describe("POST /login user/admin [FAILED CASE]", () => {
         return done();
       });
   });
-  test("should return status 400 & message when authorized", (done) => {
-    let passwordNull = {
-      ...loginError,
-      email: "user@MediaList.com",
+  test("should return status 401 & message when authorized", (done) => {
+    let authorized = {
+      email: "pelancong@mail.com",
+      password: "password",
     };
     request(app)
       .post("/login")
-      .send(passwordNull)
+      .send(authorized)
       .end((err, res) => {
         if (err) return done(err);
         const { status, body } = res;
