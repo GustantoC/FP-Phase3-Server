@@ -45,17 +45,14 @@ class TripController {
       if (findQuarantineNow) {
         throw { name: "403", message: "You are not allowed to create a trip" };
       }
-      let newTrip = await QuarantineDetail.create(
-        {
-          userId: req.user.id,
-          tripOrigin,
-          tripDestination,
-          isQuarantined: false,
-        },
-        {
-          createdBy: req.user.id,
-        }
-      );
+      let newTrip = await QuarantineDetail.create({
+        userId: req.user.id,
+        tripOrigin,
+        tripDestination,
+        isQuarantined: false
+      }, {
+        createdBy: req.user.id
+      });
       await User.update(
         {
           status: "ArrivalProcedure",
@@ -69,8 +66,7 @@ class TripController {
           individualHooks: true,
           updateType: "user",
           updatedBy: req.user.id,
-        }
-      );
+        });
       res.status(201).json({
         id: newTrip.id,
         tripOrigin,

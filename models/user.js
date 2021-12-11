@@ -117,9 +117,9 @@ module.exports = (sequelize, DataTypes) => {
         afterCreate: async (instance, options) => {
           let descriptionText = ``
           if(options.createType == 'staff'){
-            descriptionText = `New staff with ID: ${instance.id} created by ${options.createdBy}`
+            descriptionText = `New staff with Email: ${instance.email} created by ${options.createdBy}`
           } else {
-            descriptionText = `New user with ID: ${instance.id} created`
+            descriptionText = `New user with Email: ${instance.email} created`
           }
           let historyObj = {
             userId: instance.id,
