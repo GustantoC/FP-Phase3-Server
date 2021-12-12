@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../app");
-const { User, QuarantineLocation } = require("../models");
+const { User, QuarantineLocation, QuarantineDetail } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
 const { ne } = require("sequelize/dist/lib/operators");
 
@@ -40,7 +40,7 @@ beforeAll((done) => {
     email: "testUser@mail.com",
     password: "password",
     phoneNumber: "4532461",
-    status: "ArrivalProcedure",
+    status: "Quarantine",
   };
 
   User.destroy({ truncate: true, cascade: true, restartIdentity: true })
@@ -69,7 +69,8 @@ afterAll((done) => {
       done(err);
     });
 });
-describe("GET /locations ", () => {
+
+describe("GET /locations/:userId", () => {
   test(" 200, should be return object  [SUCCES GET LOCATION]", (done) => {
     let access_token = TokenHelper.signPayload({
       email: "test1@mail.com",
@@ -91,162 +92,214 @@ describe("GET /locations ", () => {
       });
   });
 });
-
-describe("POST /locations ", () => {
-  //   test(" 201, should be return object  [SUCCES POST LOCATION]", (done) => {
-  //     let token = TokenHelper.signPayload({
-  //       email: "test1@mail.com",
-  //       password: "password",
-  //     });
-  //     const newLocation = {
-  //       name: "Dummy Hotel",
-  //       address: "jl.dummy",
-  //       type: "Hotel",
-  //     };
-  //     const createdBy = {
-  //       createdBy: 1,
-  //     };
-  //     request(app)
-  //       .post("/locations")
-  //       .set("Accept", "application/json")
-  //       .set("access_token", token)
-  //       .send(newLocation, createdBy)
-  //       .then((err, res) => {
-  //         if (err) return done(err);
-  //         console.log(err, "<<<<<<<===================");
-  //         const { status, body } = res;
-  //         expect(status).toBe(201);
-  //         console.log(status, body, "<<<<<<<<<<======================");
-  //         return done();
-  //       });
-  //   });
-  test("400, should be return message  [FAILED POST LOCATION] when Type Not WISMA || HOTEl", (done) => {
-    let token = TokenHelper.signPayload({
+describe("GET /locations/userId ", () => {
+  test(" 200, should be return object  [SUCCES GET LOCATION]", (done) => {
+    let access_token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
     });
-    const newLocation = {
-      name: "Dummy Hotel",
-      address: "jl.dummy",
-      type: "Penginapan",
-    };
-    const createdBy = {
-      createdBy: 1,
-    };
     request(app)
-      .post("/locations")
+      .get("/locations/2")
       .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(newLocation, createdBy)
+      .set("access_token", access_token)
       .end((err, res) => {
         if (err) return done(err);
         const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-  test("401, should be return message  [FAILED POST LOCATION] when Type Not WISMA || HOTEl", (done) => {
-    let invalidToken =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE2MzkzMDM1OTR9.6IhbiZdgsdger564dfasveYFZmys6Odtr6Yqlr8SLI20x4U";
-    const newLocation = {
-      name: "Dummy Hotel",
-      address: "jl.dummy",
-      type: "Penginapan",
-    };
-    const createdBy = {
-      createdBy: 1,
-    };
-    request(app)
-      .post("/locations")
-      .set("Accept", "application/json")
-      .set("access_token", invalidToken)
-      .send(newLocation, createdBy)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(401);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-  test("400, should be return message  [FAILED POST LOCATION] when Name : Null", (done) => {
-    let token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-
-    const newLocation = {
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    const createdBy = {
-      createdBy: 1,
-    };
-    request(app)
-      .post("/locations")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(newLocation, createdBy)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-  test("400, should be return message  [FAILED POST LOCATION] when address : Null", (done) => {
-    let token = TokenHelper.signPayload({
-      email: "test1@mail.com",
-      password: "password",
-    });
-
-    const newLocation = {
-      name: "Dummy Hotel",
-      type: "Hotel",
-    };
-    const createdBy = {
-      createdBy: 1,
-    };
-    request(app)
-      .post("/locations")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(newLocation, createdBy)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(400);
-        expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
-  });
-  test("400, should be return message  [FAILED POST LOCATION] when address : Null", (done) => {
-    let token = TokenHelper.signPayload({
-      email: "testUser@mail.com",
-      password: "password",
-    });
-
-    const newLocation = {
-      name: "Dummy Hotel",
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    const createdBy = {
-      createdBy: 1,
-    };
-    request(app)
-      .post("/locations")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(newLocation, createdBy)
-      .end((err, res) => {
-        if (err) return done(err);
-        const { status, body } = res;
-        expect(status).toBe(403);
-        expect(body).toHaveProperty("message", expect.any(String));
+        expect(status).toBe(200);
+        console.log(
+          body,
+          status,
+          "<<<<<<<<<<===================ini get userID"
+        );
         return done();
       });
   });
 });
+
+// describe("POST /locations  [SUCCESS] POST LOCATION", () => {
+//   test(" 201, should be return object  [SUCCES POST LOCATION]", (done) => {
+//     let token = TokenHelper.signPayload({
+//       email: "test1@mail.com",
+//       password: "password",
+//     });
+//     const newLocation = {
+//       name: "Dummy Hotel",
+//       address: "jl.dummy",
+//       type: "Hotel",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", token)
+//       .send(newLocation)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         console.log(err, "<<<<<<<===================");
+//         const { status, body } = res;
+//         expect(status).toBe(201);
+//         console.log(status, body, "<<<<<<<<<<======================");
+//         return done();
+//       });
+//   });
+// });
+
+// describe("POST /locations [FAILED POST LOCATION]", () => {
+//   test("400, should be return message  [FAILED POST LOCATION] when Type Not WISMA || HOTEl", (done) => {
+//     let token = TokenHelper.signPayload({
+//       email: "test1@mail.com",
+//       password: "password",
+//     });
+//     const newLocation = {
+//       name: "Dummy Hotel",
+//       address: "jl.dummy",
+//       type: "Penginapan",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", token)
+//       .send(newLocation, createdBy)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const { status, body } = res;
+//         expect(status).toBe(400);
+//         expect(body).toHaveProperty("message", expect.any(String));
+//         return done();
+//       });
+//   });
+//   test("400, should be return message  [FAILED POST LOCATION] when Type Not WISMA || HOTEl", (done) => {
+//     let token = TokenHelper.signPayload({
+//       email: "test1@mail.com",
+//       password: "password",
+//     });
+//     const newLocation = {
+//       name: "Dummy Hotel",
+//       address: "jl.dummy",
+//       type: "Penginapan",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", token)
+//       .send(newLocation, createdBy)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const { status, body } = res;
+//         expect(status).toBe(400);
+//         expect(body).toHaveProperty("message", expect.any(String));
+//         return done();
+//       });
+//   });
+//   test("401, should be return message  [FAILED POST LOCATION] when Type Not WISMA || HOTEl", (done) => {
+//     let invalidToken =
+//       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJyb2xlIjoiQWRtaW4iLCJpYXQiOjE2MzkzMDM1OTR9.6IhbiZdgsdger564dfasveYFZmys6Odtr6Yqlr8SLI20x4U";
+//     const newLocation = {
+//       name: "Dummy Hotel",
+//       address: "jl.dummy",
+//       type: "Penginapan",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", invalidToken)
+//       .send(newLocation, createdBy)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const { status, body } = res;
+//         expect(status).toBe(401);
+//         expect(body).toHaveProperty("message", expect.any(String));
+//         return done();
+//       });
+//   });
+//   test("400, should be return message  [FAILED POST LOCATION] when Name : Null", (done) => {
+//     let token = TokenHelper.signPayload({
+//       email: "test1@mail.com",
+//       password: "password",
+//     });
+
+//     const newLocation = {
+//       address: "jl.dummy",
+//       type: "Hotel",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", token)
+//       .send(newLocation, createdBy)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const { status, body } = res;
+//         expect(status).toBe(400);
+//         expect(body).toHaveProperty("message", expect.any(String));
+//         return done();
+//       });
+//   });
+//   test("400, should be return message  [FAILED POST LOCATION] when address : Null", (done) => {
+//     let token = TokenHelper.signPayload({
+//       email: "test1@mail.com",
+//       password: "password",
+//     });
+
+//     const newLocation = {
+//       name: "Dummy Hotel",
+//       type: "Hotel",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", token)
+//       .send(newLocation, createdBy)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const { status, body } = res;
+//         expect(status).toBe(400);
+//         expect(body).toHaveProperty("message", expect.any(String));
+//         return done();
+//       });
+//   });
+//   test("400, should be return message  [FAILED POST LOCATION] when address : Null", (done) => {
+//     let token = TokenHelper.signPayload({
+//       email: "testUser@mail.com",
+//       password: "password",
+//     });
+
+//     const newLocation = {
+//       name: "Dummy Hotel",
+//       address: "jl.dummy",
+//       type: "Hotel",
+//     };
+//     const createdBy = {
+//       createdBy: 1,
+//     };
+//     request(app)
+//       .post("/locations")
+//       .set("Accept", "application/json")
+//       .set("access_token", token)
+//       .send(newLocation, createdBy)
+//       .end((err, res) => {
+//         if (err) return done(err);
+//         const { status, body } = res;
+//         expect(status).toBe(403);
+//         expect(body).toHaveProperty("message", expect.any(String));
+//         return done();
+//       });
+//   });
+// });
