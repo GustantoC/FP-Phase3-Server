@@ -14,24 +14,35 @@ beforeAll((done) => {
     status: "Active",
   };
 
-  const userTest = {
-    name: "testuser",
-    passportNumber: "9804535",
-    role: "User",
-    email: "testUser@mail.com",
-    password: "password",
-    phoneNumber: "4532461",
-    status: "ArrivalProcedure",
-  };
+  const userTest = [
+    {
+      name: "testuser",
+      passportNumber: "9804535",
+      role: "User",
+      email: "testUser@mail.com",
+      password: "password",
+      phoneNumber: "4532461",
+      status: "ArrivalProcedure",
+    },
+    {
+      name: "testuser2",
+      passportNumber: "462362462",
+      role: "User",
+      email: "testUser2@mail.com",
+      password: "password",
+      phoneNumber: "62457482",
+      status: "ArrivalProcedure",
+    },
+  ];
   const newTrip = {
-    userId: 1,
+    userId: 2,
     tripOrigin: "Jerman",
     tripDestination: "Berlin",
     isQuarantined: false,
   };
   User.destroy({ truncate: true, cascade: true, restartIdentity: true })
     .then(() => User.create(adminLoginTest))
-    .then(() => User.create(userTest))
+    .then(() => User.bulkCreate(userTest))
     .then(() => done())
     .catch((err) => done(err));
 });
@@ -60,7 +71,7 @@ describe("POST /trips ", () => {
       password: "password",
     });
     const newTrip = {
-      userId: 1,
+      userId: 3,
       tripOrigin: "Jerman",
       tripDestination: "Berlin",
       isQuarantined: false,
@@ -80,7 +91,7 @@ describe("POST /trips ", () => {
 });
 
 let newTripError = {
-  userId: 1,
+  userId: 3,
   tripOrigin: "Jerman",
   tripDestination: "Berlin",
   isQuarantined: false,
