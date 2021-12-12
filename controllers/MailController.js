@@ -33,7 +33,7 @@ class MailController {
       let mailDetails = {
         from: process.env.EMAIL,
         to: "ambulancecenter.fake@gmail.com",
-        subject: "Ermengency Ambulance call",
+        subject: "EMERGENCY Ambulance call",
         text: `EMERGENCY CALL! For ${UserDetail.User.name}, 
         Location: ${UserDetail.QuarantineLocation.name}
         Address: ${UserDetail.QuarantineLocation.address} 
@@ -42,7 +42,6 @@ class MailController {
 
       transporter.sendMail(mailDetails, function (err, data) {
         if (err) {
-          console.log(err)
           res.status(503).json({
             message: "Email sent error!",
           })
