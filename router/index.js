@@ -3,6 +3,7 @@ const UserRouter = require("./UserRouter");
 const TripRouter = require("./TripRouter");
 const StaffRouter = require("./StaffRouter");
 const HistoryRouter = require("./HistoryRouter");
+const MailRouter = require("./MailRouter");
 const LocationRouter = require("./LocationRouter");
 const QuarantineRouter = require("./QuarantineRouter");
 const Authentication = require("../middlewares/Authentication");
@@ -21,6 +22,7 @@ router.use("/staffs", StaffRouter);
 router.use("/histories", HistoryRouter);
 router.use("/locations", LocationRouter);
 router.use("/quarantines", QuarantineRouter);
+router.use("/mail", MailRouter);
 router.use(ErrorHandler);
 
 module.exports = router;

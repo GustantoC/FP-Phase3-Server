@@ -58,6 +58,11 @@ then the default value is:
 | `GET` | '/quarantines'         | [Get quarantineDetails for userId](#get-quarantinedetail-for-userId)      |
 | `PUT` | '/quarantines/:userId' | [Changing QuarantineDetail of userId](#update-quarantine-detail-for-user) |
 
+#### MAIL
+
+| Type   | Path     | Description               |
+| :----- | :------- | :------------------------ |
+| `GET` | '/mail/:userId' | [Sends emergency mail for userID](#login-user) |
 ### List of Roles
 
 - Admin
@@ -977,6 +982,42 @@ note: only `Officer(s)` can access this
 ```
 
 ---
+
+# Send mail
+
+[Back to list of API](#list-of-apis)
+
+```http
+  GET /mail/:userId
+```
+
+| Header         | Type     | Description                     |
+| :------------- | :------- | :------------------------------ |
+| `access_token` | `string` | **Required**. Your access_token |
+
+| Parameter | Type     | Description                       |
+| :-------- | :------- | :-------------------------------- |
+| `userId`      | `intger` | **Required**. Id of user that has emergency |
+
+### Response
+
+#### `200` - OK
+
+```json
+{
+  "message": "Email sent successfully"
+}
+```
+
+### Error
+
+#### `503` - Service Unavailable
+
+```json
+{
+  "message": "Email sent error!"
+}
+```
 
 [Back to list of API](#list-of-apis)
 
