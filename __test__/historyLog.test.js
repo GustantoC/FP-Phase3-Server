@@ -118,7 +118,6 @@ describe("GET /histories", () => {
         if (err) return done(err);
         const { status, body } = res;
         expect(status).toBe(200);
-        console.log(body);
         expect(body).toHaveProperty("totalItems", expect.any(Number));
         expect(body).toHaveProperty("totalPages", expect.any(Number));
         expect(body).toHaveProperty("currentPage", expect.any(Number));

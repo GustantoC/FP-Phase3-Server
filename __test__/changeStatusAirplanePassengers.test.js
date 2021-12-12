@@ -671,7 +671,7 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
           });
       });
   });
-  test(" 200, Should return user with status: '2nd Swab' when role officer: HealthOfficial", (done) => {
+  test(" 200, Should return user with status: 'Finished' when role officer: OfficerHotel", (done) => {
     const token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
@@ -707,22 +707,20 @@ describe("PUT /users/:id, [SUCCESS  PUT STATUS USER CASE]", () => {
               .put("/users/11")
               .set("Accept", "application/json")
               .set("access_token", tokenOfficerHotel)
-              .then((err, res) => {
-                if (err) return done(err);
-                const { status, body } = res;
-                console.log(status, body, "<<<<<========================");
-                expect(status).toBe(200);
-                // expect(body).toHaveProperty("id", expect.any(Number));
-                // expect(body).toHaveProperty("name", expect.any(String));
-                // expect(body).toHaveProperty(
-                //   "passportNumber",
-                //   expect.any(String)
-                // );
-                // expect(body).toHaveProperty("role", expect.any(String));
-                // expect(body).toHaveProperty("email", expect.any(String));
-                // expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                // expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .then(() => {
+                return request(app)
+                  .put("/quarantines/11")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficerHotel)
+                  .then((err, res) => {
+                    if (err) return done(err);
+                    const { status, body } = res;
+                    console.log(
+                      body,
+                      status,
+                      "<<<<<<<<<<<<==================="
+                    );
+                  });
               });
           });
       });
