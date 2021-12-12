@@ -1005,7 +1005,7 @@ note: only `Officer(s)` can access this
 
 ```json
 {
-  "message": "Email sent successfully
+  "message": "Email sent successfully"
 }
 ```
 
