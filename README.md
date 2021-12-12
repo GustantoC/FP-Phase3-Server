@@ -105,6 +105,7 @@ then the default value is:
 ````json
 [
   {
+    "name": "string",
     "role": |> One of the list of Status <|,
     "access_token": "string"
   }

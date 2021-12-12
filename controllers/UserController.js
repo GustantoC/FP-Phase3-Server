@@ -287,6 +287,7 @@ class UserController {
           role: user.role,
         });
         res.status(200).json({
+          name: user.name,
           role: user.role,
           access_token: token,
         });
