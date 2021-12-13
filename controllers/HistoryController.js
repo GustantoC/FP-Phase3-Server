@@ -43,7 +43,6 @@ class HistoryController {
       });
       res.status(200).json(getPagingData(history, page, limit));
     } catch (err) {
-      console.log(err)
       next(err)
     }
   }

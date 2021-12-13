@@ -19,7 +19,6 @@ const getPagingData = (data, page, limit) => {
   }
   const { count: totalItems, rows: pageData } = data;
   let currentPage = page ? +page : 1;
-  console.log(totalItems, '/', limit)
   const totalPages = Math.ceil(totalItems / limit);
 
   return { totalItems, pageData, totalPages, currentPage };
