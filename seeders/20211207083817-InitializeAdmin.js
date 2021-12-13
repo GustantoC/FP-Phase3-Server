@@ -6,7 +6,7 @@ module.exports = {
       "Users",
       [
         {
-          name: "Admin",
+          name: "Julius Caesar",
           passportNumber: "Staff",
           role: "Admin",
           email: "admin@admin.com",
@@ -17,7 +17,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: "Officer Airport",
+          name: "Yanni Balloulis",
           passportNumber: "Staff",
           role: "OfficerAirport",
           email: "officer@airport.com",
@@ -28,7 +28,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: "Driver Wisma",
+          name: "David Tripeas",
           passportNumber: "Staff",
           role: "DriverWisma",
           email: "driver@wisma.com",
@@ -39,7 +39,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: "Driver Hotel",
+          name: "Fotios Siskakos",
           passportNumber: "Staff",
           role: "DriverHotel",
           email: "driver@hotel.com",
@@ -50,7 +50,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: "Officer Hotel",
+          name: "Eftichios Ganallis",
           passportNumber: "Staff",
           role: "OfficerHotel",
           email: "officer@hotel.com",
@@ -72,7 +72,7 @@ module.exports = {
           updatedAt: new Date(),
         },
         {
-          name: "Health Official",
+          name: "Panagiotis Nicolatsis",
           passportNumber: "Staff",
           role: "HealthOfficial",
           email: "health@official.com",

@@ -57,7 +57,6 @@ class QuarantineController {
         isQuarantined: response[1][0].isQuarantined,
       })
     } catch (error) {
-      console.log(error)
       next(error)
     }
 
@@ -87,7 +86,6 @@ class QuarantineController {
       }
       res.status(200).json(response)
     } catch (error) {
-      console.log(error)
       next(error)
     }
   }

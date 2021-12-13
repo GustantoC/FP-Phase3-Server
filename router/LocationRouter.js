@@ -1,6 +1,6 @@
 const router = require('express').Router();
-const LocationController = require('../controllers/locationController');
-const AuthorizeAdmin = require('../middlewares/authorizeAdmin');
+const LocationController = require('../controllers/LocationController');
+const AuthorizeAdmin = require('../middlewares/AuthorizeAdmin');
 
 router.get('/', LocationController.getAllLocations);
 router.get('/:userId', LocationController.getUserLocation);

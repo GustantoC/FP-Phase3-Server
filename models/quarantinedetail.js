@@ -82,6 +82,7 @@ module.exports = (sequelize, DataTypes) => {
           updatedBy: options.createdBy,
           description: descriptionText,
         }
+        console.log(historyObj,"<< Ini history Object")
         await sequelize.models.HistoryLog.create(historyObj)
       }
     },
