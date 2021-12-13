@@ -177,7 +177,7 @@ class UserController {
       if (req.user.role == "OfficerHotel" && currentLocation.type !== "Hotel") {
         throw { name: "403", message: "You can't change user status" };
       }
-
+      console.log(req.user, "<<<<<<<<===============");
       const response = await User.update(
         { status: nextStatus },
         {
