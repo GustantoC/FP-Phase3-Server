@@ -62,7 +62,7 @@ then the default value is:
 
 | Type   | Path     | Description               |
 | :----- | :------- | :------------------------ |
-| `GET` | '/mail/:userId' | [Sends emergency mail for userID](#login-user) |
+| `GET` | '/mail/:userId' | [Sends emergency mail for userID](#send-mail) |
 ### List of Roles
 
 - Admin
@@ -107,7 +107,7 @@ then the default value is:
 
 #### `200` - OK
 
-````json
+```json
 [
   {
     "name": "string",
@@ -115,6 +115,7 @@ then the default value is:
     "access_token": "string"
   }
 ]
+```
 
 ### Error
 #### `400` - BadParameter
