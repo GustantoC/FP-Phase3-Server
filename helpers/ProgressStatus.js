@@ -20,18 +20,15 @@ function progressStatus(status, role = "") {
     return "Exit Terminal";
   }
   if (
-    status == "Exit Terminal" &&
-    (role == "DriverHotel" || role == "DriverWisma")
+    status === "Exit Terminal" &&
+    (role === "DriverHotel" || role === "DriverWisma")
   ) {
     return "On route";
   }
-  if (
-    status == "On route" &&
-    (role == "OfficerHotel" || role == "OfficerWisma")
-  ) {
+  if (status == "On route") {
     if (role == "OfficerWisma") {
       return "Briefing";
-    } else {
+    } else if (role == "OfficerHotel") {
       return "Quarantine";
     }
   }
