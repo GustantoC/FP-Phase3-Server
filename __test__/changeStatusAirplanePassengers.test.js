@@ -140,10 +140,40 @@ beforeAll((done) => {
       phoneNumber: "547485227658386",
       status: "2nd Swab",
     },
+    {
+      // 14
+      name: "Penumpang",
+      passportNumber: "243624572",
+      role: "Penumpang",
+      email: "Penumpang@mail.com",
+      password: "password",
+      phoneNumber: "547485227658386",
+      status: "ArrivalProcedure",
+    },
+  ];
+  const quarantineLocation = [
+    {
+      name: "dummy Hotel",
+      address: "jl. dummy",
+      type: "Hotel",
+    },
+    {
+      name: "dummy Wisma",
+      address: "jl. dummy",
+      type: "Wisma",
+    },
+    {
+      name: "dummy Penginapan",
+      address: "jl. dummy",
+      type: "Penginapan",
+    },
   ];
 
   User.create(adminLoginTest)
     .then(() => User.bulkCreate(userChangeStatus))
+    .then(() =>
+      QuarantineLocation.bulkCreate(quarantineLocation, { createdBy: 1 })
+    )
     .then(() => done())
     .catch((err) => done(err));
 });
@@ -192,64 +222,66 @@ describe("PUT /users/:id, return status user: Interview [SUCCESS  PUT STATUS USE
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Hotel",
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 2 })
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'Interview'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerAirport",
-      passportNumber: "462752625727",
-      email: "OfficerAirport@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerAirport",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerAirport",
+          passportNumber: "462752625727",
           email: "OfficerAirport@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerAirport",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerAirport@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/2")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/2")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -267,64 +299,66 @@ describe("PUT /users/:id, return status user: Interviewed [SUCCESS  PUT STATUS U
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Hotel",
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 3 })
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'Interviewed'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerAirport",
-      passportNumber: "462752625727",
-      email: "OfficerAirport@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerAirport",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerAirport",
+          passportNumber: "462752625727",
           email: "OfficerAirport@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerAirport",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerAirport@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/3")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/3")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -342,64 +376,66 @@ describe("PUT /users/:id, return status user: Exit Terminal [SUCCESS  PUT STATUS
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Hotel",
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 4 })
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'Exit Terminal'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerAirport",
-      passportNumber: "462752625727",
-      email: "OfficerAirport@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerAirport",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerAirport",
+          passportNumber: "462752625727",
           email: "OfficerAirport@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerAirport",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerAirport@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/4")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/4")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -417,65 +453,66 @@ describe("PUT /users/:id, return status user: On route [SUCCESS  PUT STATUS USER
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Hotel",
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 5 })
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "DriverHotel",
-      passportNumber: "462752625727",
-      email: "DriverHotel@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "DriverHotel",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverHotel",
+          passportNumber: "462752625727",
           email: "DriverHotel@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverHotel",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "DriverHotel@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/5")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/5")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -486,72 +523,73 @@ describe("PUT /users/:id, return status user: On route [SUCCESS  PUT STATUS USER
   beforeEach((done) => {
     const quarantine = {
       userId: 6,
-      locationId: 1,
+      locationId: 2,
       roomNumber: "5A",
       quarantineuntil: new Date(),
       tripOrigin: "Germany",
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Wisma",
-      address: "jl.dummy",
-      type: "Wisma",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 6 })
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "DriverWisma",
-      passportNumber: "462752625727",
-      email: "DriverWisma@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "DriverWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverWisma",
+          passportNumber: "462752625727",
           email: "DriverWisma@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverWisma",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "DriverWisma@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/6")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                console.log(body, "<<<<<<<===================");
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/6")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -560,223 +598,153 @@ describe("PUT /users/:id, return status user: On route [SUCCESS  PUT STATUS USER
 
 describe("PUT /users/:id, return status user: Briefing || Quarantine [SUCCESS  PUT STATUS USER CASE]  when role OfficerWisma || OfficerHotel ", () => {
   beforeEach((done) => {
-    const quarantine = [
-      {
-        userId: 7,
-        locationId: 2,
-        roomNumber: "5A",
-        quarantineuntil: new Date(),
-        tripOrigin: "Nederland",
-        tripDeatination: "Den Haag",
-        isQuarantined: false,
-      },
-      {
-        userId: 8,
-        locationId: 1,
-        roomNumber: "5A",
-        quarantineuntil: new Date(),
-        tripOrigin: "Germany",
-        tripDeatination: "Berlin",
-        isQuarantined: false,
-      },
-    ];
-    const locationQuarantine = [
-      {
-        name: "dummy Wisma",
-        address: "jl.dummy",
-        type: "Wisma",
-      },
-      {
-        name: "dummy Hotel",
-        address: "jl.dummy",
-        type: "Hotel",
-      },
-    ];
-    QuarantineLocation.bulkCreate(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.bulkCreate(quarantine, { createdBy: 1 }))
-      .then(() => done())
-      .catch((err) => done(err));
-  });
-  test(" 200, Should return user with status: 'Quarantine'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
-      email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerHotel",
-      passportNumber: "462752625727",
-      email: "OfficerHotel@mail.com",
-      password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerHotel",
-      status: "Active",
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
-          email: "OfficerHotel@mail.com",
-          password: "password",
-        };
-        return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
-            return request(app)
-              .put("/users/7")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                done();
-              });
-          });
-      });
-  });
-  test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
-      email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerWisma",
-      passportNumber: "462752625727",
-      email: "OfficerWisma@mail.com",
-      password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerWisma",
-      status: "Active",
-    };
-    request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
-          email: "OfficerWisma@mail.com",
-          password: "password",
-        };
-        return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
-            return request(app)
-              .put("/users/8")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                done();
-              });
-          });
-      });
-  });
-});
-
-describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS USER CASE]  when role OfficerHotel", () => {
-  beforeEach((done) => {
-    const quarantine = {
+    const quarantine1 = {
       userId: 7,
       locationId: 1,
+      roomNumber: "5A",
+      quarantineuntil: new Date(),
+      tripOrigin: "Nederland",
+      tripDeatination: "Den Haag",
+      isQuarantined: false,
+    };
+    const quarantine2 = {
+      userId: 8,
+      locationId: 2,
       roomNumber: "5A",
       quarantineuntil: new Date(),
       tripOrigin: "Germany",
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Hotel",
-      address: "jl.dummy",
-      type: "Hotel",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+
+    QuarantineDetail.create(quarantine1, { createdBy: 7 })
+      .then(() => QuarantineDetail.create(quarantine2, { createdBy: 8 }))
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'Quarantine'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerHotel",
-      passportNumber: "462752625727",
-      email: "OfficerHotel@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerHotel",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerHotel",
+          passportNumber: "462752625727",
           email: "OfficerHotel@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerHotel",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerHotel@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/7")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/7")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    done();
+                  });
+              });
+          });
+      });
+  });
+  test(" 200, Should return user with status: 'On route'", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerWisma",
+          passportNumber: "462752625727",
+          email: "OfficerWisma@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerWisma",
+          status: "Active",
+        };
+        request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerWisma@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/8")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    done();
+                  });
               });
           });
       });
   });
 });
 
+//  ERROR NEED FIX
 describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS USER CASE]  when role OfficerWisma", () => {
   beforeEach((done) => {
     const quarantine = {
@@ -788,64 +756,67 @@ describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS US
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Wisma",
-      address: "jl.dummy",
-      type: "Wisma",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 9 })
       .then(() => done())
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerWisma",
-      passportNumber: "462752625727",
-      email: "OfficerWisma@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerWisma",
+          passportNumber: "462752625727",
           email: "OfficerWisma@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerWisma",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerWisma@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/9")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/9")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    console.log(body, status, "<<<<<=========================");
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -855,7 +826,7 @@ describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS US
 describe("PUT /users/:id, return status user: 1st Swab [SUCCESS  PUT STATUS USER CASE]  when role HealthOfficial", () => {
   beforeEach((done) => {
     const quarantine = {
-      userId: 10,
+      userId: 9,
       locationId: 1,
       roomNumber: "5A",
       quarantineuntil: new Date(),
@@ -863,64 +834,67 @@ describe("PUT /users/:id, return status user: 1st Swab [SUCCESS  PUT STATUS USER
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Wisma",
-      address: "jl.dummy",
-      type: "Wisma",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+
+    QuarantineDetail.create(quarantine, { createdBy: 9 })
       .then(() => done())
       .catch((err) => done(err));
   });
-  test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+  test(" 200, Should return user with status: 'Quarantine'", (done) => {
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "HealthOfficial",
-      passportNumber: "462752625727",
-      email: "HealthOfficial@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "HealthOfficial",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "HealthOfficial",
+          passportNumber: "462752625727",
           email: "HealthOfficial@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "HealthOfficial",
+          status: "Active",
         };
-        return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+        request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "HealthOfficial@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/10")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/10")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -949,53 +923,61 @@ describe("PUT /users/:id, return status user: 2nd Swab [SUCCESS  PUT STATUS USER
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "HealthOfficial",
-      passportNumber: "462752625727",
-      email: "HealthOfficial@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "HealthOfficial",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "HealthOfficial",
+          passportNumber: "462752625727",
           email: "HealthOfficial@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "HealthOfficial",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "HealthOfficial@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/11")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/11")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -1023,54 +1005,62 @@ describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER
       .then(() => done())
       .catch((err) => done(err));
   });
-  test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+  test(" 200, Should return user with status: 'Finished'", (done) => {
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerWisma",
-      passportNumber: "462752625727",
-      email: "OfficerWisma@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
-          email: "OfficerWisma@mail.com",
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerHotel",
+          passportNumber: "462752625727",
+          email: "OfficerHotel@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerHotel",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerHotel@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/12")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/12")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
@@ -1099,234 +1089,497 @@ describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER
       .catch((err) => done(err));
   });
   test(" 200, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerWisma",
-      passportNumber: "462752625727",
-      email: "OfficerWisma@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerWisma",
+          passportNumber: "462752625727",
           email: "OfficerWisma@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerWisma",
+          status: "Active",
         };
-        return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+        request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerWisma@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/13")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                console.log(body, status, "<<<<<<<<<<==============");
-                expect(status).toBe(200);
-                expect(body).toHaveProperty("id", expect.any(Number));
-                expect(body).toHaveProperty("name", expect.any(String));
-                expect(body).toHaveProperty(
-                  "passportNumber",
-                  expect.any(String)
-                );
-                expect(body).toHaveProperty("role", expect.any(String));
-                expect(body).toHaveProperty("email", expect.any(String));
-                expect(body).toHaveProperty("phoneNumber", expect.any(String));
-                expect(body).toHaveProperty("status", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/13")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(200);
+                    expect(body).toHaveProperty("id", expect.any(Number));
+                    expect(body).toHaveProperty("name", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "passportNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("role", expect.any(String));
+                    expect(body).toHaveProperty("email", expect.any(String));
+                    expect(body).toHaveProperty(
+                      "phoneNumber",
+                      expect.any(String)
+                    );
+                    expect(body).toHaveProperty("status", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
   });
 });
 
+//  ERROR CASE
+
 describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
   test(" 401, Should return error message when Token Invalid", (done) => {
-    const token = TokenHelper.signPayload({
+    const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
-    });
-    const payload = {
-      name: "DriverWisma",
-      passportNumber: "462752625727",
-      email: "DriverWisma@mail.com",
-      password: "password",
-      phoneNumber: "236234632632",
-      role: "DriverWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
-          email: "OfficerAirport@mail.com",
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverWisma",
+          passportNumber: "462752625727",
+          email: "DriverWisma@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverWisma",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
           .then(() => {
-            let invalidToken =
-              "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIwMUBtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE2MjI2MDk2NTF9.gShAB2qaCUjlnvNuM1MBWfBVEjDGdqjWSJNMEScXIeE";
-
+            const loginOfficer = {
+              email: "OfficerAirport@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/3")
-              .set("Accept", "application/json")
-              .set("access_token", invalidToken)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(401);
-                expect(body).toHaveProperty("message", expect.any(String));
-                done();
+              .post("/login")
+              .send(loginOfficer)
+              .then(() => {
+                let invalidToken =
+                  "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIwMUBtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE2MjI2MDk2NTF9.gShAB2qaCUjlnvNuM1MBWfBVEjDGdqjWSJNMEScXIeE";
+
+                return request(app)
+                  .put("/users/3")
+                  .set("Accept", "application/json")
+                  .set("access_token", invalidToken)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(401);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    done();
+                  });
               });
           });
       });
   });
   test(" 403, Should return error message when Unauthorized", (done) => {
-    const token = TokenHelper.signPayload({
+    const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
-    });
-    let officerHealth = {
-      name: "HealthOfficial",
-      passportNumber: "462752625727",
-      email: "HealthOfficial@mail.com",
-      password: "password",
-      phoneNumber: "236234632632",
-      role: "HealthOfficial",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(officerHealth)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        let officerHealth = {
+          name: "HealthOfficial",
+          passportNumber: "462752625727",
           email: "HealthOfficial@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "HealthOfficial",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(officerHealth)
           .then(() => {
-            let tokenOfficer = TokenHelper.signPayload({
+            const loginOfficer = {
               email: "HealthOfficial@mail.com",
               password: "password",
-            });
+            };
             return request(app)
-              .put("/users/2")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(403);
-                expect(body).toHaveProperty("message", expect.any(String));
-                done();
+              .post("/login")
+              .send(loginOfficer)
+              .then(() => {
+                let tokenOfficer = TokenHelper.signPayload({
+                  email: "HealthOfficial@mail.com",
+                  password: "password",
+                });
+                return request(app)
+                  .put("/users/2")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(403);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    done();
+                  });
               });
           });
       });
   });
   test(" 404, Should return error message when User NotFound", (done) => {
-    const token = TokenHelper.signPayload({
+    const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
-    });
-    const payload = {
-      name: "DriverWisma",
-      passportNumber: "462752625727",
-      email: "DriverWisma@mail.com",
-      password: "password",
-      phoneNumber: "236234632632",
-      role: "DriverWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverWisma",
+          passportNumber: "462752625727",
           email: "DriverWisma@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverWisma",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "DriverWisma@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/29")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(404);
-                expect(body).toHaveProperty("message", expect.any(String));
-                done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/29577")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(404);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    done();
+                  });
+              });
+          });
+      });
+  });
+  test(" 404, Should return error message when User NotFound", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverWisma",
+          passportNumber: "462752625727",
+          email: "DriverWisma@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverWisma",
+          status: "Active",
+        };
+        return request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "DriverWisma@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/14")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(404);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    done();
+                  });
               });
           });
       });
   });
 });
 
-describe("PUT /users/:id, return status user: On route [FAILLED  PUT STATUS USER CASE]  when isQuarantined: true", () => {
-  test("403, Should return user with status: 'On route'", (done) => {
-    const token = TokenHelper.signPayload({
-      id: 1,
+describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when Quarantine Detail null", () => {
+  test(" 404, Should return message", (done) => {
+    const loginAdmin = {
       email: "test1@mail.com",
-      role: "Admin",
-    });
-    const payload = {
-      name: "OfficerWisma",
-      passportNumber: "462752625727",
-      email: "OfficerWisma@mail.com",
       password: "password",
-      phoneNumber: "236234632632",
-      role: "OfficerWisma",
-      status: "Active",
     };
     request(app)
-      .post("/staffs")
-      .set("Accept", "application/json")
-      .set("access_token", token)
-      .send(payload)
-      .then(() => {
-        const loginOfficer = {
-          email: "OfficerWisma@mail.com",
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerAirport",
+          passportNumber: "462752625727",
+          email: "OfficerAirport@mail.com",
           password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerAirport",
+          status: "Active",
         };
         return request(app)
-          .post("/login")
-          .send(loginOfficer)
-          .then((data) => {
-            let tokenOfficer = data.body.access_token;
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerAirport@mail.com",
+              password: "password",
+            };
             return request(app)
-              .put("/users/2")
-              .set("Accept", "application/json")
-              .set("access_token", tokenOfficer)
-              .then((res) => {
-                const { status, body } = res;
-                expect(status).toBe(403);
-                expect(body).toHaveProperty("message", expect.any(String));
-                return done();
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/2")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(404);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    return done();
+                  });
+              });
+          });
+      });
+  });
+});
+
+describe("PUT /users/:id, return message [FAILLED  PUT STATUS USER CASE]  when isQuarantined: true", () => {
+  test("403, Should return user with status: 'On route'", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerWisma",
+          passportNumber: "462752625727",
+          email: "OfficerWisma@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerWisma",
+          status: "Active",
+        };
+        return request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerWisma@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/2")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(403);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    return done();
+                  });
+              });
+          });
+      });
+  });
+});
+
+describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when role DriverHotel and type !== Hotel", () => {
+  beforeEach((done) => {
+    const quarantine = {
+      userId: 5,
+      locationId: 3,
+      roomNumber: "5A",
+      quarantineuntil: new Date(),
+      tripOrigin: "Germany",
+      tripDeatination: "Berlin",
+      isQuarantined: false,
+    };
+
+    QuarantineDetail.create(quarantine, { createdBy: 5 })
+      .then(() => done())
+      .catch((err) => done(err));
+  });
+  test(" 403, Should return user with status: 'On route'", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverHotel",
+          passportNumber: "462752625727",
+          email: "DriverHotel@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverHotel",
+          status: "Active",
+        };
+        return request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "DriverHotel@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/5")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(403);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    return done();
+                  });
+              });
+          });
+      });
+  });
+});
+
+describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when role OfficerHotel and Type !== Hotel", () => {
+  beforeEach((done) => {
+    const quarantine = {
+      userId: 7,
+      locationId: 3,
+      roomNumber: "5A",
+      quarantineuntil: new Date(),
+      tripOrigin: "Germany",
+      tripDeatination: "Berlin",
+      isQuarantined: false,
+    };
+
+    QuarantineDetail.create(quarantine, { createdBy: 1 })
+      .then(() => done())
+      .catch((err) => done(err));
+  });
+  test(" 403, Should return user with status: 'Quarantine'", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerHotel",
+          passportNumber: "462752625727",
+          email: "OfficerHotel@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerHotel",
+          status: "Active",
+        };
+        return request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerHotel@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/7")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(403);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    return done();
+                  });
               });
           });
       });
