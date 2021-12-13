@@ -60,8 +60,8 @@ describe("GET /users ", () => {
         if (err) return done(err);
         const { status, body } = res;
         expect(status).toBe(200);
-        expect(Array.isArray(body)).toBeTruthy();
-        expect(body.length).toBeGreaterThan(0);
+        expect(Array.isArray(body.pageData)).toBeTruthy();
+        expect(body.pageData.length).toBeGreaterThan(0);
         return done();
       });
   });
@@ -92,6 +92,18 @@ describe("GET /users:id", () => {
         return done();
       });
   });
+  test("401 should return message [FAILED CASE] when not set access_token", (done) => {
+    request(app)
+      .get("/users/1")
+      .end((err, res) => {
+        if (err) return done(err);
+        const { status, body } = res;
+        expect(status).toBe(401);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+
   test("404 should return message [FAILED CASE]", (done) => {
     let access_token = TokenHelper.signPayload({
       email: "test1@mail.com",
@@ -106,6 +118,22 @@ describe("GET /users:id", () => {
         if (err) return done(err);
         const { status, body } = res;
         expect(status).toBe(404);
+        expect(body).toHaveProperty("message", expect.any(String));
+        return done();
+      });
+  });
+  test("404 should return message [FAILED CASE]", (done) => {
+    let invalidToken =
+      "3462574gqejibisavbuqg9873tf73/fywgf9wqgf97qgffqwfe-wrbhwvergqergvqergqegqegqegqe-qrghqerhqehqeh/htwhwrtwrth";
+
+    request(app)
+      .get("/users/11004")
+      .set("Accept", "application/json")
+      .set("access_token", invalidToken)
+      .end((err, res) => {
+        if (err) return done(err);
+        const { status, body } = res;
+        expect(status).toBe(401);
         expect(body).toHaveProperty("message", expect.any(String));
         return done();
       });

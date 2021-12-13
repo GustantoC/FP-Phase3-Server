@@ -65,9 +65,26 @@ afterAll((done) => {
 });
 
 describe("POST /trips ", () => {
+  afterEach((done) => {
+    User.update(
+      {
+        status: "ArrivalProcedure",
+      },
+      {
+        where: {
+          id: 3,
+        },
+        individualHooks: true,
+        updateType: "user",
+        updatedBy: 3,
+      }
+    )
+      .then(() => done())
+      .catch((err) => done(err));
+  });
   test(" 201, should be return some object  [SUCCES POST DATA TRIP]", (done) => {
     const tokenUser = TokenHelper.signPayload({
-      email: "testUser@mail.com",
+      email: "testUser2@mail.com",
       password: "password",
     });
     const newTrip = {
@@ -81,12 +98,14 @@ describe("POST /trips ", () => {
       .set("Accept", "application/json")
       .set("access_token", tokenUser)
       .send(newTrip)
-      .then((err, res) => {
-        if (err) return done(err);
+      .then((res) => {
         const { status, body } = res;
         console.log(status, body, "<<<<<<<<<<<<<================");
-        return done();
-      });
+        // expect(status).toBe(200);
+
+        done();
+      })
+      .catch((err) => done(err));
   });
 });
 
@@ -97,7 +116,7 @@ let newTripError = {
   isQuarantined: false,
 };
 
-describe("POST /trips", () => {
+describe("POST /trips [ERROR CASE]", () => {
   test("400, should be return message  [FAILED POST DATA TRIP] where tripOrigin: null", (done) => {
     let tripOriginNull = {
       ...newTripError,
@@ -116,8 +135,9 @@ describe("POST /trips", () => {
         const { status, body } = res;
         expect(status).toBe(400);
         expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
+        done();
+      })
+      .catch((err) => done(err));
   });
   test("400, should be return message  [FAILED POST DATA TRIP] where tripDestination: null", (done) => {
     let tripDestinationNull = {
@@ -137,8 +157,9 @@ describe("POST /trips", () => {
         const { status, body } = res;
         expect(status).toBe(400);
         expect(body).toHaveProperty("message", expect.any(String));
-        return done();
-      });
+        done();
+      })
+      .catch((err) => done(err));
   });
   test("400, should be return message  [FAILED POST DATA TRIP] where Role Not 'User'", (done) => {
     const token = TokenHelper.signPayload({
@@ -173,8 +194,9 @@ describe("POST /trips", () => {
             const { status, body } = res;
             expect(status).toBe(403);
             expect(body).toHaveProperty("message", expect.any(String));
-            return done();
-          });
+            done();
+          })
+          .catch((err) => done(err));
       });
   });
 });
