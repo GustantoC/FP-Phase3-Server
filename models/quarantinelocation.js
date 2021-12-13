@@ -47,7 +47,7 @@ module.exports = (sequelize, DataTypes) => {
       afterCreate: async (instance, options) => {
         let descriptionText = `New location created: ${instance.name}`;
         let historyObj = {
-          userId: instance.id,
+          userId: options.createdBy,
           updatedBy: options.createdBy,
           description: descriptionText,
         }
