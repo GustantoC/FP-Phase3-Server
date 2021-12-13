@@ -91,7 +91,7 @@ describe("POST /login user/admin [FAILED CASE]", () => {
         return done();
       });
   });
-  test("should return status 401 & message when authorized", (done) => {
+  test("should return status 400 & message when authorized", (done) => {
     let authorized = {
       email: "pelancong@mail.com",
       password: "password",
@@ -102,7 +102,7 @@ describe("POST /login user/admin [FAILED CASE]", () => {
       .end((err, res) => {
         if (err) return done(err);
         const { status, body } = res;
-        expect(status).toBe(401);
+        expect(status).toBe(400);
         expect(body).toHaveProperty("message", expect.any(String));
         return done();
       });

@@ -1,10 +1,10 @@
-const PasswordHelper = require('../helpers/PasswordHelper');
-const TokenHelper = require('../helpers/TokenHelper');
-const acceptedRoles = require('../helpers/AcceptedStaffRoles');
-const { User, QuarantineDetail, QuarantineLocation } = require('../models');
-const progressStatus = require('../helpers/ProgressStatus');
+const PasswordHelper = require("../helpers/PasswordHelper");
+const TokenHelper = require("../helpers/TokenHelper");
+const acceptedRoles = require("../helpers/AcceptedStaffRoles");
+const { User, QuarantineDetail, QuarantineLocation } = require("../models");
+const progressStatus = require("../helpers/ProgressStatus");
 const { getPagination, getPagingData } = require("../helpers/PaginationHelper");
-const { Op } = require('sequelize');
+const { Op } = require("sequelize");
 class UserController {
   //GET All User ()
   static async getAllUsers(req, res, next) {
@@ -13,10 +13,8 @@ class UserController {
       let { page, size } = req.query;
       const { limit, offset } = getPagination(page, size);
       let options = {
-        [Op.and]: [
-          { role: { [Op.ne]: "User" } },
-        ]
-      }
+        [Op.and]: [{ role: { [Op.ne]: "User" } }],
+      };
       if (role) options = { role: role };
       const response = await User.findAndCountAll({
         limit,
@@ -164,44 +162,52 @@ class UserController {
         throw { name: "404", message: "User not on active quarantine" };
       }
 
-      const currentLocation = await QuarantineLocation.findByPk(quarantineDetail.locationId);
-      if (req.user.role == 'DriverWisma' && currentLocation.type !== 'Wisma') {
+      const currentLocation = await QuarantineLocation.findByPk(
+        quarantineDetail.locationId
+      );
+      if (req.user.role == "DriverWisma" && currentLocation.type !== "Wisma") {
         throw { name: "403", message: "You can't change user status" };
       }
-      if (req.user.role == 'DriverHotel' && currentLocation.type !== 'Hotel') {
+      if (req.user.role == "DriverHotel" && currentLocation.type !== "Hotel") {
         throw { name: "403", message: "You can't change user status" };
       }
-      if (req.user.role == 'OfficerWisma' && currentLocation.type !== 'Wisma') {
+      if (req.user.role == "OfficerWisma" && currentLocation.type !== "Wisma") {
         throw { name: "403", message: "You can't change user status" };
       }
-      if (req.user.role == 'OfficerHotel' && currentLocation.type !== 'Hotel') {
+      if (req.user.role == "OfficerHotel" && currentLocation.type !== "Hotel") {
         throw { name: "403", message: "You can't change user status" };
       }
 
-      const response = await User.update({ status: nextStatus }, {
-        where: {
-          id: id
-        },
-        fields: ['status'],
-        returning: true,
-        individualHooks: true,
-        updateType: 'user',
-        updatedBy: req.user.id
-      });
+      const response = await User.update(
+        { status: nextStatus },
+        {
+          where: {
+            id: id,
+          },
+          fields: ["status"],
+          returning: true,
+          individualHooks: true,
+          updateType: "user",
+          updatedBy: req.user.id,
+        }
+      );
 
       if (nextStatus === "Finished") {
         try {
-          await QuarantineDetail.update({ isQuarantined: true }, {
-            where: {
-              userId: id,
-            },
-            fields: ["isQuarantined"],
-            individualHooks: true,
-            oldStatus: currStatus,
-            createdBy: req.user.id,
-          });
+          await QuarantineDetail.update(
+            { isQuarantined: true },
+            {
+              where: {
+                userId: id,
+              },
+              fields: ["isQuarantined"],
+              individualHooks: true,
+              oldStatus: currStatus,
+              createdBy: req.user.id,
+            }
+          );
         } catch (error) {
-          console.log(error)
+          console.log(error);
         }
       }
       res.status(200).json({
@@ -217,7 +223,6 @@ class UserController {
       next(error);
     }
   }
-
 
   //PUT Role Staff
   static async changeStaffRole(req, res, next) {

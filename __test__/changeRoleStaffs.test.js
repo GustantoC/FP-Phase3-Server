@@ -73,9 +73,10 @@ describe("PUT /staffs, [SUCCESS  REGISTER CASE]", () => {
             expect(body).toHaveProperty("email", expect.any(String));
             expect(body).toHaveProperty("phoneNumber", expect.any(String));
             expect(body).toHaveProperty("status", expect.any(String));
-            return done();
+            done();
           });
-      });
+      })
+      .catch((err) => done(err));
   });
 });
 
@@ -113,9 +114,10 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
             const { status, body } = res;
             expect(status).toBe(401);
             expect(body).toHaveProperty("message", expect.any(String));
-            return done();
+            done();
           });
-      });
+      })
+      .catch((err) => done(err));
   });
   test("should be return message, because {TOKEN INVALID", (done) => {
     const token = TokenHelper.signPayload({
@@ -148,9 +150,10 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
             const { status, body } = res;
             expect(status).toBe(400);
             expect(body).toHaveProperty("message", expect.any(String));
-            return done();
+            done();
           });
-      });
+      })
+      .catch((err) => done(err));
   });
   test("should be return message, because {TOKEN INVALID", (done) => {
     const token = TokenHelper.signPayload({
@@ -182,8 +185,9 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
             const { status, body } = res;
             expect(status).toBe(404);
             expect(body).toHaveProperty("message", expect.any(String));
-            return done();
+            done();
           });
-      });
+      })
+      .catch((err) => done(err));
   });
 });

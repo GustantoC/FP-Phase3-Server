@@ -110,38 +110,40 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     {
-      hooks:{
+      hooks: {
         beforeCreate: (instance, options) => {
           instance.password = PasswordHelper.hashPassword(instance.password);
         },
         afterCreate: async (instance, options) => {
-          let descriptionText = ``
-          if(options.createType == 'staff'){
-            descriptionText = `New staff with Email: ${instance.email} created by ${options.createdBy}`
+          let descriptionText = ``;
+          if (options.createType == "staff") {
+            descriptionText = `New staff with Email: ${instance.email} created by ${options.createdBy}`;
           } else {
-            descriptionText = `New user with Email: ${instance.email} created`
+            descriptionText = `New user with Email: ${instance.email} created`;
           }
           let historyObj = {
             userId: instance.id,
             updatedBy: options.createdBy || instance.id,
             description: descriptionText,
-          }
-          await sequelize.models.HistoryLog.create(historyObj)
+          };
+          await sequelize.models.HistoryLog.create(historyObj);
         },
         afterUpdate: async (instance, options) => {
-          let descriptionText = ``
-          if(options.updateType == 'user'){
-            descriptionText = `Status changed from ${instance.previous('status')} to ${instance.status}`
-          } else if (options.updateType == 'staff'){
-            descriptionText = `Role changed from ${options.oldRole} to ${instance.role}`
+          let descriptionText = ``;
+          if (options.updateType == "user") {
+            descriptionText = `Status changed from ${instance.previous(
+              "status"
+            )} to ${instance.status}`;
+          } else if (options.updateType == "staff") {
+            descriptionText = `Role changed from ${options.oldRole} to ${instance.role}`;
           }
           let historyObj = {
             userId: instance.id,
             updatedBy: options.updatedBy,
             description: descriptionText,
-          }
-          await sequelize.models.HistoryLog.create(historyObj)
-        }
+          };
+          await sequelize.models.HistoryLog.create(historyObj);
+        },
       },
       sequelize,
       modelName: "User",
