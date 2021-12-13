@@ -28,7 +28,9 @@
     "nodemailer": "^6.7.2",
     "pg": "^8.7.1",
     "sequelize": "^6.12.0-alpha.1",
-    "supertest": "^6.1.6"
+    "socket.io": "^4.4.0",
+    "supertest": "^6.1.6",
+    "twilio": "^3.71.3"
   },
   "devDependencies": {
     "nodemon": "^2.0.15",
