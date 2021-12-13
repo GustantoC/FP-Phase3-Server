@@ -138,6 +138,44 @@ describe("POST /trips ", () => {
   });
 });
 
+describe("GET /trips ", () => {
+  test(" 200, should be return some object  [SUCCES POST DATA TRIP]", (done) => {
+    const loginUser = {
+      email: "testUser@mail.com",
+      password: "password",
+    };
+
+    request(app)
+      .post("/login")
+      .send(loginUser)
+      .then((data) => {
+        let tokenUser = data.body.access_token;
+        const newTrip = {
+          tripOrigin: "Jerman",
+          tripDestination: "Berlin",
+        };
+        return request(app)
+          .post("/trips")
+          .set("Accept", "application/json")
+          .set("access_token", tokenUser)
+          .send(newTrip)
+          .then(() => {
+            return request(app)
+              .get("/trips")
+              .set("Accept", "application/json")
+              .set("access_token", tokenUser)
+              .then((res) => {
+                const { body, status } = res;
+                expect(status).toBe(200);
+                expect(Array.isArray(body)).toBeTruthy();
+                expect(body.length).toBeGreaterThan(0);
+                done();
+              });
+          });
+      });
+  });
+});
+
 let newTripError = {
   userId: 2,
   tripOrigin: "Jerman",
