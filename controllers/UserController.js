@@ -190,17 +190,19 @@ class UserController {
       });
 
       if (nextStatus === "Finished") {
-        await QuarantineDetail.update({ isQuarantined: true }, {
-          where: {
-            id: id,
-          },
-          fields: ["status"],
-          returning: true,
-          individualHooks: true,
-          updateType: "user",
-          oldStatus: currStatus,
-          updatedBy: req.user.id,
-        });
+        try {
+          await QuarantineDetail.update({ isQuarantined: true }, {
+            where: {
+              userId: id,
+            },
+            fields: ["isQuarantined"],
+            individualHooks: true,
+            oldStatus: currStatus,
+            createdBy: req.user.id,
+          });
+        } catch (error) {
+          console.log(error)
+        }
       }
       res.status(200).json({
         id: response[1][0].id,
@@ -212,7 +214,6 @@ class UserController {
         status: response[1][0].status,
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }
@@ -265,7 +266,6 @@ class UserController {
   //POST /login
   static async Login(req, res, next) {
     try {
-      console.log(req.body);
       const { email, password } = req.body;
       if (!email) {
         throw { name: "400", message: "Email is required" };

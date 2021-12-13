@@ -120,7 +120,6 @@ class LocationController {
         type: response[1][0].type,
       });
     } catch (error) {
-      console.log(error);
       next(error);
     }
   }

@@ -76,6 +76,7 @@ class MailController {
         ],
         order: [["createdAt", "DESC"]]
       });
+      
       if (!UserDetail) {
         throw { name: "404", message: "User not found" };
       }
