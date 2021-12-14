@@ -7,6 +7,13 @@ class MailController {
   static async sendMail(req, res, next) {
     try {
       let { userId } = req.params;
+      let checkuser = await User.findByPk(userId);
+      if (!checkuser) {
+        throw { name: "404", message: "User not found" };
+      }
+      if (checkuser.status !== "Quarantine" || checkuser.status !== "1st Swab" || checkuser.status !== "2nd Swab") {
+        throw { name: "404", message: "User is not on any location" };
+      }
       let UserDetail = await QuarantineDetail.findOne({
         where: { userId: userId },
         include: [
@@ -22,7 +29,7 @@ class MailController {
         order: [["createdAt", "DESC"]],
       });
       if (!UserDetail) {
-        throw { name: "404", message: "User not found" };
+        throw { name: "404", message: "User is not on any location" };
       }
       let transporter = nodemailer.createTransport({
         service: "gmail",
@@ -39,11 +46,10 @@ class MailController {
         text: `EMERGENCY CALL! For ${UserDetail.User.name}, 
         Location: ${UserDetail.QuarantineLocation.name}
         Address: ${UserDetail.QuarantineLocation.address} 
-        on Room Number ${
-          UserDetail.QuarantineLocation.roomNumber
+        on Room Number ${UserDetail.QuarantineLocation.roomNumber
             ? UserDetail.QuarantineLocation.roomNumber
             : "<unknown>"
-        }`,
+          }`,
       };
 
       transporter.sendMail(mailDetails, function (err, data) {
