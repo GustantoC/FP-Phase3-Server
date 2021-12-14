@@ -329,6 +329,33 @@ describe("POST /locations  [ERROR CASE] POST LOCATION", () => {
           });
       });
   });
+  test(" 403, should be return message when Role not Admin", (done) => {
+    const loginUser = {
+      email: "testUser@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginUser)
+      .then((data) => {
+        let tokenUser = data.body.access_token;
+        const newLocation = {
+          name: "Dummy Hotel",
+          address: "Jl.hotel",
+        };
+        return request(app)
+          .post("/locations")
+          .set("Accept", "application/json")
+          .set("access_token", tokenUser)
+          .send(newLocation)
+          .then((res) => {
+            const { body, status } = res;
+            expect(status).toBe(403);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
+          });
+      });
+  });
 });
 
 describe("PUT /locations/:id  [ERROR CASE] PUT LOCATION", () => {

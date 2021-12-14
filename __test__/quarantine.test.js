@@ -259,7 +259,7 @@ describe("GET /quarantines [ERROR CASE]", () => {
           });
       });
   });
-  test("404, [SUCCESS CASE]", (done) => {
+  test("404, [FAILED CASE] when Role not OfficerAirport", (done) => {
     const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
@@ -423,12 +423,73 @@ describe("PUT /quarantines/:userId [FAILED CASE]", () => {
                   .send(updateQuarantineLocation)
                   .then((res) => {
                     const { status, body } = res;
-                    console.log(status, body);
                     expect(status).toBe(404);
                     expect(body).toHaveProperty("message", expect.any(String));
                     done();
                   });
               });
+          });
+      });
+  });
+});
+
+describe("PUT /quarantines/:userId [SUCCESS CASE]", () => {
+  beforeEach((done) => {
+    const quarantineLocation = [
+      {
+        name: "Wisma Atlet Pademangan",
+        address:
+          "Jl. Pademangan IX No.113, RW.10, Pademangan Tim., Kec. Pademangan, Kota Jkt Utara, Daerah Khusus Ibukota Jakarta 14410",
+        type: "Wisma",
+      },
+      {
+        name: "Mandarin Oriental Jakarta",
+        address:
+          "Jl. MH Thamrin, RT.1/RW.5, Menteng, Kec. Menteng, Kota Jakarta Pusat, Daerah Khusus Ibukota Jakarta 10310",
+        type: "Hotel",
+      },
+    ];
+    const quarantine = {
+      userId: 2,
+      locationId: 1,
+      roomNumber: "5A",
+      quarantineuntil: new Date(),
+      tripOrigin: "Germany",
+      tripDestination: "Berlin",
+      isQuarantined: false,
+    };
+    QuarantineLocation.bulkCreate(quarantineLocation, { createdBy: 1 })
+      .then(() => QuarantineDetail.create(quarantine, { createdBy: 2 }))
+      .then(() => done())
+      .catch((err) => done(err));
+  });
+  test("403, [FAILED CASE] when Role: User", (done) => {
+    const loginUser = {
+      email: "ArrivalProcedure@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginUser)
+      .then((data) => {
+        let tokenUser = data.body.access_token;
+        const updateQuarantineLocation = {
+          locationId: 2,
+          roomNumber: "10D",
+          quarantineUntil: new Date(),
+          tripOrigin: "Mexico",
+          tripDestination: "Pátzcuaro",
+        };
+        return request(app)
+          .put("/quarantines/2")
+          .set("Accept", "application/json")
+          .set("access_token", tokenUser)
+          .send(updateQuarantineLocation)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(403);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
           });
       });
   });

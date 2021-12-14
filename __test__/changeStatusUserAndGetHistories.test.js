@@ -1065,7 +1065,6 @@ describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER
   });
 });
 
-//  ERROR NEED FIX
 describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER CASE]  when role OfficerWisma", () => {
   beforeEach((done) => {
     const quarantine = {
@@ -1537,7 +1536,7 @@ describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when ro
       .then(() => done())
       .catch((err) => done(err));
   });
-  test(" 403, Should return user with status: 'On route'", (done) => {
+  test(" 403, Should return message", (done) => {
     const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
