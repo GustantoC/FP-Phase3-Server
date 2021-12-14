@@ -208,7 +208,7 @@ class UserController {
             }
           );
         } catch (error) {
-          console.log(error);
+          next(error);
         }
       }
       res.status(200).json({

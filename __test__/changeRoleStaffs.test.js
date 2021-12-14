@@ -13,7 +13,17 @@ beforeAll((done) => {
     phoneNumber: "111333",
     status: "Active",
   };
+  const userTest = {
+    name: "ArrivalProcedure",
+    passportNumber: "2624624",
+    role: "User",
+    email: "ArrivalProcedure@mail.com",
+    password: "password",
+    phoneNumber: "14547257",
+    status: "ArrivalProcedure",
+  };
   User.create(adminLoginTest)
+    .then(() => User.create(userTest))
     .then(() => {
       done();
     })
@@ -59,7 +69,7 @@ describe("PUT /staffs, [SUCCESS  REGISTER CASE]", () => {
       .then(() => {
         const role = { role: "HealthOfficial" };
         return request(app)
-          .put("/staffs/2")
+          .put("/staffs/3")
           .set("Accept", "application/json")
           .set("access_token", token)
           .send(role)
@@ -106,7 +116,7 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
           "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6InVzZXIwMUBtYWlsLmNvbSIsImlkIjoxLCJpYXQiOjE2MjI2MDk2NTF9.gShAB2qaCUjlnvNuM1MBWfBVEjDGdqjWSJNMEScXIeE";
 
         return request(app)
-          .put("/staffs/2")
+          .put("/staffs/3")
           .set("Accept", "application/json")
           .set("access_token", invalidToken)
           .send(role)
@@ -142,7 +152,7 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
         const role = { role: "Petugas Bandara" };
 
         return request(app)
-          .put("/staffs/2")
+          .put("/staffs/3")
           .set("Accept", "application/json")
           .set("access_token", token)
           .send(role)
@@ -155,7 +165,7 @@ describe("PUT /staffs, [FAILED  CHANGE TOLE STAFF CASE]", () => {
       })
       .catch((err) => done(err));
   });
-  test("should be return message, because {TOKEN INVALID", (done) => {
+  test("should be return message, User Not Found", (done) => {
     const token = TokenHelper.signPayload({
       email: "test1@mail.com",
       password: "password",
