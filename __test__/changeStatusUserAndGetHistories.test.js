@@ -744,12 +744,11 @@ describe("PUT /users/:id, return status user: Briefing || Quarantine [SUCCESS  P
   });
 });
 
-//  ERROR NEED FIX
 describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS USER CASE]  when role OfficerWisma", () => {
   beforeEach((done) => {
     const quarantine = {
       userId: 9,
-      locationId: 1,
+      locationId: 2,
       roomNumber: "5A",
       quarantineuntil: new Date(),
       tripOrigin: "Germany",
@@ -760,7 +759,7 @@ describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS US
       .then(() => done())
       .catch((err) => done(err));
   });
-  test(" 200, Should return user with status: 'On route'", (done) => {
+  test(" 200, Should return user with status: 'Quarantine'", (done) => {
     const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
@@ -800,7 +799,6 @@ describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS US
                   .set("access_token", tokenOfficer)
                   .then((res) => {
                     const { status, body } = res;
-                    console.log(body, status, "<<<<<=========================");
                     expect(status).toBe(200);
                     expect(body).toHaveProperty("id", expect.any(Number));
                     expect(body).toHaveProperty("name", expect.any(String));
@@ -826,7 +824,7 @@ describe("PUT /users/:id, return status user: Quarantine [SUCCESS  PUT STATUS US
 describe("PUT /users/:id, return status user: 1st Swab [SUCCESS  PUT STATUS USER CASE]  when role HealthOfficial", () => {
   beforeEach((done) => {
     const quarantine = {
-      userId: 9,
+      userId: 10,
       locationId: 1,
       roomNumber: "5A",
       quarantineuntil: new Date(),
@@ -835,7 +833,7 @@ describe("PUT /users/:id, return status user: 1st Swab [SUCCESS  PUT STATUS USER
       isQuarantined: false,
     };
 
-    QuarantineDetail.create(quarantine, { createdBy: 9 })
+    QuarantineDetail.create(quarantine, { createdBy: 10 })
       .then(() => done())
       .catch((err) => done(err));
   });
@@ -1067,24 +1065,19 @@ describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER
   });
 });
 
+//  ERROR NEED FIX
 describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER CASE]  when role OfficerWisma", () => {
   beforeEach((done) => {
     const quarantine = {
       userId: 13,
-      locationId: 1,
+      locationId: 2,
       roomNumber: "5A",
       quarantineuntil: new Date(),
       tripOrigin: "Germany",
       tripDeatination: "Berlin",
       isQuarantined: false,
     };
-    const locationQuarantine = {
-      name: "dummy Wisma",
-      address: "jl.dummy",
-      type: "Wisma",
-    };
-    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
-      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+    QuarantineDetail.create(quarantine, { createdBy: 1 })
       .then(() => done())
       .catch((err) => done(err));
   });
@@ -1145,6 +1138,80 @@ describe("PUT /users/:id, return status user: Finished [SUCCESS  PUT STATUS USER
                     return done();
                   });
               });
+          });
+      });
+  });
+});
+
+describe("GET /histories", () => {
+  beforeEach((done) => {
+    const quarantine = {
+      userId: 13,
+      locationId: 1,
+      roomNumber: "5A",
+      quarantineuntil: new Date(),
+      tripOrigin: "Germany",
+      tripDeatination: "Berlin",
+      isQuarantined: false,
+    };
+    const locationQuarantine = {
+      name: "dummy Wisma",
+      address: "jl.dummy",
+      type: "Wisma",
+    };
+    QuarantineLocation.create(locationQuarantine, { createdBy: 1 })
+      .then(() => QuarantineDetail.create(quarantine, { createdBy: 1 }))
+      .then(() => done())
+      .catch((err) => done(err));
+  });
+  test(" 200, some Object", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        return request(app)
+          .get("/histories")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(200);
+            expect(body).toHaveProperty("totalItems", expect.any(Number));
+            expect(body).toHaveProperty("totalPages", expect.any(Number));
+            expect(body).toHaveProperty("currentPage", expect.any(Number));
+            expect(Array.isArray(body.pageData)).toBeTruthy();
+            expect(body.pageData.length).toBeGreaterThan(0);
+            done();
+          });
+      });
+  });
+  test(" 401, [ERROR CASE] when INVALID TOKEN", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        let invalidToken =
+          "3462574gqejibisavbuqg9873tf73/fywgf9wqgf97qgffqwfe-wrbhwvergqergvqergqegqegqegqe-qrghqerhqehqeh/htwhwrtwrth";
+
+        return request(app)
+          .get("/histories")
+          .set("Accept", "application/json")
+          .set("access_token", invalidToken)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(401);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
           });
       });
   });
@@ -1352,6 +1419,7 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
   });
 });
 
+//  ERROR NEED FIX
 describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when Quarantine Detail null", () => {
   test(" 404, Should return message", (done) => {
     const loginAdmin = {
@@ -1388,7 +1456,7 @@ describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when Qu
               .then((data) => {
                 let tokenOfficer = data.body.access_token;
                 return request(app)
-                  .put("/users/2")
+                  .put("/users/3984")
                   .set("Accept", "application/json")
                   .set("access_token", tokenOfficer)
                   .then((res) => {

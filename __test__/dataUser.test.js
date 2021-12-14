@@ -49,6 +49,7 @@ afterAll((done) => {
 describe("GET /users ", () => {
   test(" 200, should be return an array of object  [SUCCES GET DATA USERS]", (done) => {
     let access_token = TokenHelper.signPayload({
+      id: 1,
       email: "test1@mail.com",
       password: "password",
     });
