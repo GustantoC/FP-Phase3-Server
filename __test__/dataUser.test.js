@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app");
 const { User } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
+const UserController = require("../controllers/UserController");
 
 beforeAll((done) => {
   const adminLoginTest = {
@@ -140,39 +141,3 @@ describe("GET /users:id", () => {
       });
   });
 });
-
-// describe("GET /users [CASE FAILED]", () => {
-//   function defuse(promise) {
-//     promise.catch(() => {});
-//     return promise;
-//   }
-//   const loginUser = {
-//     email: "testUser@mail.com",
-//     password: "password",
-//   };
-//   test.only("INTERNAL SERVER ERROR", (done) => {
-//     request(app)
-//       .post("/login")
-//       .set("Accept", "application/json")
-//       .send(loginUser)
-//       .then((data) => {
-//         const addMock = jest.spyOn(User, "useerList");
-//         addMock.mockImplementation(() =>
-//           defuse(Promise.reject(new Error("test1")))
-//         );
-//         return request(app)
-//           .get("/users")
-//           .set("Accept", "application/json")
-//           .set("access_token", data.body.access_token)
-//           .then((res) => {
-//             expect(res.status).toBe(500);
-//             addMock.mockReset();
-//             done();
-//           });
-//       })
-
-//       .catch((err) => {
-//         done(err);
-//       });
-//   });
-// });

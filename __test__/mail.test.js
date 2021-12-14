@@ -7,7 +7,6 @@ const {
   HistoryLog,
 } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
-const { get } = require("superagent");
 
 beforeAll((done) => {
   const adminLoginTest = {
@@ -88,7 +87,6 @@ afterAll((done) => {
     });
 });
 
-// ERROR CASE
 describe("GET /mail/userId, [Error CASE]", () => {
   beforeEach((done) => {
     const quarantine = {
@@ -104,7 +102,7 @@ describe("GET /mail/userId, [Error CASE]", () => {
       .then(() => done())
       .catch((err) => done(err));
   });
-  test("Should return message 'Email sent error!'", (done) => {
+  test("Should return message 'Email sent successfully'", (done) => {
     const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
@@ -120,14 +118,15 @@ describe("GET /mail/userId, [Error CASE]", () => {
           .set("access_token", tokenAdmin)
           .then((res) => {
             const { status, body } = res;
-            expect(status).toBe(503);
-            expect(body).toHaveProperty("message", expect.any(String));
+            expect(status).toBe(200);
+            expect(body).toHaveProperty("message", "Email sent successfully");
             done();
           });
       });
   });
 });
 
+// ERROR CASE
 describe("GET /mail/userId, [Error CASE]", () => {
   beforeEach((done) => {
     const quarantine = {
