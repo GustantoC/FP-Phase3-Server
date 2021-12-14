@@ -3,13 +3,18 @@ const app = require("../app");
 const { User } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
 const UserController = require("../controllers/UserController");
+const access_token = TokenHelper.signPayload({
+  id: 1,
+  email: "test1@mail.com",
+  role: "Admin",
+});
 
 beforeAll((done) => {
   const adminLoginTest = {
     name: "test",
     passportNumber: "09437410364326",
-    role: "Admin",
     email: "test1@mail.com",
+    role: "Admin",
     password: "password",
     phoneNumber: "111333",
     status: "Active",
@@ -31,6 +36,10 @@ beforeAll((done) => {
     .catch((err) => {
       done(err);
     });
+});
+
+beforeEach(() => {
+  jest.restoreAllMocks();
 });
 
 afterAll((done) => {
@@ -138,6 +147,23 @@ describe("GET /users:id", () => {
         expect(status).toBe(401);
         expect(body).toHaveProperty("message", expect.any(String));
         return done();
+      });
+  });
+});
+
+describe("GET /users", () => {
+  test("[500 - Error] Error Intenal Server Error", async () => {
+    jest.spyOn(User, "findAll").mockRejectedValue("Error");
+
+    return request(app)
+      .get("/users")
+      .set("Accept", "application/json")
+      .set({ access_token })
+      .then((res) => {
+        const { body, status } = res;
+        expect(status).toBe(500);
+        expect(body).toHaveProperty("message", expect.any(String));
+        expect(body).toEqual({ message: "Internal Server Error" });
       });
   });
 });

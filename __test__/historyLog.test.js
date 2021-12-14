@@ -2,6 +2,11 @@ const request = require("supertest");
 const app = require("../app");
 const { User, HistoryLog } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
+const access_token = TokenHelper.signPayload({
+  id: 1,
+  email: "test1@mail.com",
+  role: "Admin",
+});
 
 beforeAll((done) => {
   const adminLoginTest = {
@@ -84,6 +89,10 @@ beforeAll((done) => {
     .catch((err) => done(err));
 });
 
+beforeEach(() => {
+  jest.restoreAllMocks();
+});
+
 afterAll((done) => {
   User.destroy({
     truncate: true,
@@ -123,6 +132,23 @@ describe("GET /histories", () => {
         expect(body).toHaveProperty("currentPage", expect.any(Number));
         expect(body).toHaveProperty("pageData", expect.any(Array));
         return done();
+      });
+  });
+});
+
+describe("GET /histories", () => {
+  test("[500 - Error] Error Intenal Server Error", async () => {
+    jest.spyOn(User, "findAll").mockRejectedValue("Error");
+
+    return request(app)
+      .get("/histories")
+      .set("Accept", "application/json")
+      .set({ access_token })
+      .then((res) => {
+        const { body, status } = res;
+        expect(status).toBe(500);
+        expect(body).toHaveProperty("message", expect.any(String));
+        expect(body).toEqual({ message: "Internal Server Error" });
       });
   });
 });

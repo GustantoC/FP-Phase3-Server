@@ -211,6 +211,57 @@ afterAll((done) => {
     });
 });
 
+describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when Quarantine Detail null", () => {
+  test(" 404, Should return message", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "OfficerAirport",
+          passportNumber: "462752625727",
+          email: "OfficerAirport@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "OfficerAirport",
+          status: "Active",
+        };
+        return request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "OfficerAirport@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/2")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    expect(status).toBe(404);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    done();
+                  });
+              });
+          });
+      });
+  });
+});
+
 describe("PUT /users/:id, return status user: Interview [SUCCESS  PUT STATUS USER CASE]  when role officialofficial", () => {
   beforeEach((done) => {
     const quarantine = {
@@ -1418,57 +1469,6 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
   });
 });
 
-describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when Quarantine Detail null", () => {
-  test(" 404, Should return message", (done) => {
-    const loginAdmin = {
-      email: "test1@mail.com",
-      password: "password",
-    };
-    request(app)
-      .post("/login")
-      .send(loginAdmin)
-      .then((data) => {
-        let token = data.body.access_token;
-        const payload = {
-          name: "OfficerAirport",
-          passportNumber: "462752625727",
-          email: "OfficerAirport@mail.com",
-          password: "password",
-          phoneNumber: "236234632632",
-          role: "OfficerAirport",
-          status: "Active",
-        };
-        return request(app)
-          .post("/staffs")
-          .set("Accept", "application/json")
-          .set("access_token", token)
-          .send(payload)
-          .then(() => {
-            const loginOfficer = {
-              email: "OfficerAirport@mail.com",
-              password: "password",
-            };
-            return request(app)
-              .post("/login")
-              .send(loginOfficer)
-              .then((data) => {
-                let tokenOfficer = data.body.access_token;
-                return request(app)
-                  .put("/users/3984")
-                  .set("Accept", "application/json")
-                  .set("access_token", tokenOfficer)
-                  .then((res) => {
-                    const { status, body } = res;
-                    expect(status).toBe(404);
-                    expect(body).toHaveProperty("message", expect.any(String));
-                    return done();
-                  });
-              });
-          });
-      });
-  });
-});
-
 describe("PUT /users/:id, return message [FAILLED  PUT STATUS USER CASE]  when isQuarantined: true", () => {
   test("403, Should return user with status: 'On route'", (done) => {
     const loginAdmin = {
@@ -1520,7 +1520,7 @@ describe("PUT /users/:id, return message [FAILLED  PUT STATUS USER CASE]  when i
   });
 });
 
-describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when role DriverHotel and type !== Hotel", () => {
+describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]", () => {
   beforeEach((done) => {
     const quarantine = {
       userId: 5,
@@ -1536,7 +1536,7 @@ describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when ro
       .then(() => done())
       .catch((err) => done(err));
   });
-  test(" 403, Should return message", (done) => {
+  test(" 403, Should return message   when role DriverHotel and type !== Hotel", (done) => {
     const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
@@ -1584,13 +1584,62 @@ describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when ro
           });
       });
   });
+  test(" 403, Should return message when role DriverWisma and type !== Wisma", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const payload = {
+          name: "DriverWisma",
+          passportNumber: "462752625727",
+          email: "DriverWisma@mail.com",
+          password: "password",
+          phoneNumber: "236234632632",
+          role: "DriverWisma",
+          status: "Active",
+        };
+        return request(app)
+          .post("/staffs")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(payload)
+          .then(() => {
+            const loginOfficer = {
+              email: "DriverWisma@mail.com",
+              password: "password",
+            };
+            return request(app)
+              .post("/login")
+              .send(loginOfficer)
+              .then((data) => {
+                let tokenOfficer = data.body.access_token;
+                return request(app)
+                  .put("/users/5")
+                  .set("Accept", "application/json")
+                  .set("access_token", tokenOfficer)
+                  .then((res) => {
+                    const { status, body } = res;
+                    console.log(body);
+                    expect(status).toBe(403);
+                    expect(body).toHaveProperty("message", expect.any(String));
+                    return done();
+                  });
+              });
+          });
+      });
+  });
 });
 
 describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when role OfficerHotel and Type !== Hotel", () => {
   beforeEach((done) => {
     const quarantine = {
       userId: 7,
-      locationId: 3,
+      locationId: 2,
       roomNumber: "5A",
       quarantineuntil: new Date(),
       tripOrigin: "Germany",
