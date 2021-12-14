@@ -1419,7 +1419,6 @@ describe("PUT /users/:id, [FAILED  PUT STATUS USER CASE]", () => {
   });
 });
 
-//  ERROR NEED FIX
 describe("PUT /users/:id, return message [FAILED  PUT STATUS USER CASE]  when Quarantine Detail null", () => {
   test(" 404, Should return message", (done) => {
     const loginAdmin = {
