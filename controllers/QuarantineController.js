@@ -1,51 +1,69 @@
-const { QuarantineDetail, User, QuarantineLocation } = require('../models')
+const { QuarantineDetail, User, QuarantineLocation } = require("../models");
 
 class QuarantineController {
   //PUT Update QuarantineDeail untuk userId
   static async updateQuarantineDetail(req, res, next) {
     try {
-      if (req.user.role == 'User' || req.user.role == 'Admin') {
-        throw { name: '403', message: 'You can\'t access this' }
+      if (req.user.role == "User" || req.user.role == "Admin") {
+        throw { name: "403", message: "You can't access this" };
       }
-      let { locationId, roomNumber, quarantineUntil, tripOrigin, tripDestination } = req.body
-      let { userId } = req.params
+      let {
+        locationId,
+        roomNumber,
+        quarantineUntil,
+        tripOrigin,
+        tripDestination,
+      } = req.body;
+      let { userId } = req.params;
 
       if (locationId) {
-        if (req.user.role !== 'OfficerAirport') {
-          throw { name: '403', message: 'You can\'t access this' }
+        if (req.user.role !== "OfficerAirport") {
+          throw { name: "403", message: "You can't access this" };
         }
-        const checkLocation = await QuarantineLocation.findByPk(locationId)
-        
+        const checkLocation = await QuarantineLocation.findByPk(locationId);
+
         if (!checkLocation) {
-          throw { name: '404', message: `Quarantine Location with ID ${locationId} not found` }
+          throw {
+            name: "404",
+            message: `Quarantine Location with ID ${locationId} not found`,
+          };
         }
       }
 
       const currentQuarantineDetail = await QuarantineDetail.findOne({
         where: {
           userId,
-          isQuarantined: false
-        }
-      })
+          isQuarantined: false,
+        },
+      });
       if (!currentQuarantineDetail) {
-        throw { name: '404', message: `Can't find User with ID in quarantine` }
+        throw { name: "404", message: `Can't find User with ID in quarantine` };
       }
 
-      const response = await QuarantineDetail.update({
-        locationId,
-        roomNumber,
-        quarantineUntil,
-        tripOrigin,
-        tripDestination
-      }, {
-        where: {
-          id: currentQuarantineDetail.id
+      const response = await QuarantineDetail.update(
+        {
+          locationId,
+          roomNumber,
+          quarantineUntil,
+          tripOrigin,
+          tripDestination,
         },
-        fields: ['locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination'],
-        returning: true,
-        individualHooks: true,
-        createdBy: req.user.id
-      })
+        {
+          where: {
+            id: currentQuarantineDetail.id,
+          },
+          fields: [
+            "locationId",
+            "roomNumber",
+            "quarantineUntil",
+            "tripOrigin",
+            "tripDestination",
+          ],
+          returning: true,
+          individualHooks: true,
+          createdBy: req.user.id,
+        }
+      );
       res.status(200).json({
         id: response[1][0].id,
         userId: response[1][0].userId,
@@ -55,38 +73,50 @@ class QuarantineController {
         tripOrigin: response[1][0].tripOrigin,
         tripDestination: response[1][0].tripDestination,
         isQuarantined: response[1][0].isQuarantined,
-      })
+      });
     } catch (error) {
-      next(error)
+      next(error);
     }
-
   }
 
   //GET getAllQuarantineDetails
   static async getAllQuarantineDetails(req, res, next) {
     try {
-      if (req.user.role !== 'User') {
-        throw { name: '403', message: 'You can\'t access this' }
+      if (req.user.role !== "User") {
+        throw { name: "403", message: "You can't access this" };
       }
       const response = await QuarantineDetail.findAll({
         where: {
-          userId: req.user.id
+          userId: req.user.id,
         },
-        attributes: ['id', 'userId', 'locationId', 'roomNumber', 'quarantineUntil', 'tripOrigin', 'tripDestination', 'isQuarantined', 'createdAt'],
-        include: [{
-          model: User,
-          attributes: ['id', 'name', 'email', 'phoneNumber', 'status']
-        }, {
-          model: QuarantineLocation,
-          attributes: ['id', 'name', 'address', 'type']
-        }]
-      })
+        attributes: [
+          "id",
+          "userId",
+          "locationId",
+          "roomNumber",
+          "quarantineUntil",
+          "tripOrigin",
+          "tripDestination",
+          "isQuarantined",
+          "createdAt",
+        ],
+        include: [
+          {
+            model: User,
+            attributes: ["id", "name", "email", "phoneNumber", "status"],
+          },
+          {
+            model: QuarantineLocation,
+            attributes: ["id", "name", "address", "type"],
+          },
+        ],
+      });
       if (response.length === 0) {
-        throw { name: '404', message: `Can\'t find any data` }
+        throw { name: "404", message: `Can\'t find any data` };
       }
-      res.status(200).json(response)
+      res.status(200).json(response);
     } catch (error) {
-      next(error)
+      next(error);
     }
   }
   /*returns
@@ -103,4 +133,4 @@ class QuarantineController {
   */
 }
 
-module.exports = QuarantineController
+module.exports = QuarantineController;

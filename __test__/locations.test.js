@@ -2,7 +2,6 @@ const request = require("supertest");
 const app = require("../app");
 const { User, QuarantineLocation, QuarantineDetail } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
-const { ne } = require("sequelize/dist/lib/operators");
 
 beforeAll((done) => {
   const adminLoginTest = {
@@ -220,8 +219,8 @@ describe("PUT /locations/:id  [SUCCESS CASE] PUT LOCATION", () => {
 });
 
 // ERROR CASE
-describe("POST /locations  [ERROR CASE] POST LOCATION when type not Hotel || Wisma", () => {
-  test(" 400, should be return message ", (done) => {
+describe("POST /locations  [ERROR CASE] POST LOCATION", () => {
+  test(" 400, should be return message when type not Hotel || Wisma", (done) => {
     const loginAdmin = {
       email: "test1@mail.com",
       password: "password",
@@ -235,6 +234,87 @@ describe("POST /locations  [ERROR CASE] POST LOCATION when type not Hotel || Wis
           name: "Dummy Hotel",
           address: "jl.dummy",
           type: "Penginapan",
+        };
+        return request(app)
+          .post("/locations")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(newLocation)
+          .then((res) => {
+            const { body, status } = res;
+            expect(status).toBe(400);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
+          });
+      });
+  });
+  test(" 400, should be return message when name Null", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const newLocation = {
+          address: "jl.dummy",
+          type: "Hotel",
+        };
+        return request(app)
+          .post("/locations")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(newLocation)
+          .then((res) => {
+            const { body, status } = res;
+            expect(status).toBe(400);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
+          });
+      });
+  });
+  test(" 400, should be return message when Address Null", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const newLocation = {
+          name: "Dummy Hotel",
+          type: "Hotel",
+        };
+        return request(app)
+          .post("/locations")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .send(newLocation)
+          .then((res) => {
+            const { body, status } = res;
+            expect(status).toBe(400);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
+          });
+      });
+  });
+  test(" 400, should be return message when Type Null", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        const newLocation = {
+          name: "Dummy Hotel",
+          address: "Jl.hotel",
         };
         return request(app)
           .post("/locations")
@@ -392,6 +472,31 @@ describe("GET /locations/userId  [ERROR CASE]", () => {
         let token = data.body.access_token;
         return request(app)
           .get("/locations/50")
+          .set("Accept", "application/json")
+          .set("access_token", token)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(404);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
+          });
+      });
+  });
+});
+
+describe("GET /locations", () => {
+  test(" 200, should be return array  [SUCCES POST LOCATION]", (done) => {
+    const loginAdmin = {
+      email: "test1@mail.com",
+      password: "password",
+    };
+    request(app)
+      .post("/login")
+      .send(loginAdmin)
+      .then((data) => {
+        let token = data.body.access_token;
+        return request(app)
+          .get("/locations/1")
           .set("Accept", "application/json")
           .set("access_token", token)
           .then((res) => {
