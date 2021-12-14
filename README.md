@@ -992,6 +992,9 @@ note: only `Officer(s)` can access this
   GET /mail/:userId
 ```
 
+Note: Sends email for an emergency pickup for `userId`  
+User has to be on quarantine, 1st Swab or 2nd Swab
+
 | Header         | Type     | Description                     |
 | :------------- | :------- | :------------------------------ |
 | `access_token` | `string` | **Required**. Your access_token |
@@ -1017,6 +1020,14 @@ note: only `Officer(s)` can access this
 ```json
 {
   "message": "Email sent error!"
+}
+- OR -
+{
+  "message": "User is not on any location"
+}
+- OR -
+{
+  "message": "User not found"
 }
 ```
 
