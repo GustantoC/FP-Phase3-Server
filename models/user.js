@@ -131,9 +131,7 @@ module.exports = (sequelize, DataTypes) => {
         afterUpdate: async (instance, options) => {
           let descriptionText = ``;
           if (options.updateType == "user") {
-            descriptionText = `Status changed from ${instance.previous(
-              "status"
-            )} to ${instance.status}`;
+            descriptionText = `Status changed from ${options.oldStatus} to ${instance.status}`;
           } else if (options.updateType == "staff") {
             descriptionText = `Role changed from ${options.oldRole} to ${instance.role}`;
           }

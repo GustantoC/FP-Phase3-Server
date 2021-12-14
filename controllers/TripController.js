@@ -68,6 +68,7 @@ class TripController {
           returning: true,
           individualHooks: true,
           updateType: "user",
+          oldStatus: "ArrivalProcedure",
           updatedBy: req.user.id,
         }
       );

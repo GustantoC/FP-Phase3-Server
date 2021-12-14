@@ -188,6 +188,7 @@ class UserController {
           returning: true,
           individualHooks: true,
           updateType: "user",
+          oldStatus: currStatus,
           updatedBy: req.user.id,
         }
       );
