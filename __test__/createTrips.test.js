@@ -1,6 +1,6 @@
 const request = require("supertest");
 const app = require("../app");
-const { User, QuarantineDetail } = require("../models");
+const { User, QuarantineDetail, QuarantineLocation } = require("../models");
 const TokenHelper = require("../helpers/TokenHelper");
 
 beforeAll((done) => {
@@ -14,35 +14,40 @@ beforeAll((done) => {
     status: "Active",
   };
 
-  const userTest = [
+  const userTest = {
+    name: "testuser",
+    passportNumber: "9804535",
+    role: "User",
+    email: "testUser@mail.com",
+    password: "password",
+    phoneNumber: "4532461",
+    status: "ArrivalProcedure",
+  };
+
+  const quarantineLocation = [
     {
-      name: "testuser",
-      passportNumber: "9804535",
-      role: "User",
-      email: "testUser@mail.com",
-      password: "password",
-      phoneNumber: "4532461",
-      status: "ArrivalProcedure",
+      name: "dummy Hotel",
+      address: "jl. dummy",
+      type: "Hotel",
     },
     {
-      name: "testuser2",
-      passportNumber: "462362462",
-      role: "User",
-      email: "testUser2@mail.com",
-      password: "password",
-      phoneNumber: "62457482",
-      status: "ArrivalProcedure",
+      name: "dummy Wisma",
+      address: "jl. dummy",
+      type: "Wisma",
+    },
+    {
+      name: "dummy Penginapan",
+      address: "jl. dummy",
+      type: "Penginapan",
     },
   ];
-  const newTrip = {
-    userId: 2,
-    tripOrigin: "Jerman",
-    tripDestination: "Berlin",
-    isQuarantined: false,
-  };
+
   User.destroy({ truncate: true, cascade: true, restartIdentity: true })
     .then(() => User.create(adminLoginTest))
-    .then(() => User.bulkCreate(userTest))
+    .then(() => User.create(userTest))
+    .then(() =>
+      QuarantineLocation.bulkCreate(quarantineLocation, { createdBy: 1 })
+    )
     .then(() => done())
     .catch((err) => done(err));
 });
@@ -50,6 +55,13 @@ beforeAll((done) => {
 afterAll((done) => {
   User.destroy({ truncate: true, cascade: true, restartIdentity: true })
     .then(() => {
+      return QuarantineLocation.destroy({
+        truncate: true,
+        cascade: true,
+        restartIdentity: true,
+      });
+    })
+    .then((_) => {
       return QuarantineDetail.destroy({
         truncate: true,
         cascade: true,
@@ -65,52 +77,107 @@ afterAll((done) => {
 });
 
 describe("POST /trips ", () => {
-  afterEach((done) => {
-    User.update(
-      {
-        status: "ArrivalProcedure",
-      },
-      {
-        where: {
-          id: 3,
-        },
-        individualHooks: true,
-        updateType: "user",
-        updatedBy: 3,
-      }
-    )
-      .then(() => done())
-      .catch((err) => done(err));
-  });
   test(" 201, should be return some object  [SUCCES POST DATA TRIP]", (done) => {
-    const tokenUser = TokenHelper.signPayload({
-      email: "testUser2@mail.com",
+    const loginUser = {
+      email: "testUser@mail.com",
       password: "password",
-    });
-    const newTrip = {
-      userId: 3,
-      tripOrigin: "Jerman",
-      tripDestination: "Berlin",
-      isQuarantined: false,
     };
-    request(app)
-      .post("/trips")
-      .set("Accept", "application/json")
-      .set("access_token", tokenUser)
-      .send(newTrip)
-      .then((res) => {
-        const { status, body } = res;
-        console.log(status, body, "<<<<<<<<<<<<<================");
-        // expect(status).toBe(200);
 
-        done();
-      })
-      .catch((err) => done(err));
+    request(app)
+      .post("/login")
+      .send(loginUser)
+      .then((data) => {
+        let tokenUser = data.body.access_token;
+        const newTrip = {
+          tripOrigin: "Jerman",
+          tripDestination: "Berlin",
+        };
+        return request(app)
+          .post("/trips")
+          .set("Accept", "application/json")
+          .set("access_token", tokenUser)
+          .send(newTrip)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(201);
+            expect(body).toHaveProperty("id", expect.any(Number));
+            expect(body).toHaveProperty("tripOrigin", expect.any(String));
+            expect(body).toHaveProperty("tripDestination", expect.any(String));
+
+            done();
+          });
+      });
+  });
+  test(" 403, should be return message [FAILED POST DATA TRIP]", (done) => {
+    const loginUser = {
+      email: "testUser@mail.com",
+      password: "password",
+    };
+
+    request(app)
+      .post("/login")
+      .send(loginUser)
+      .then((data) => {
+        let tokenUser = data.body.access_token;
+        const newTrip = {
+          tripOrigin: "Jerman",
+          tripDestination: "Berlin",
+        };
+        return request(app)
+          .post("/trips")
+          .set("Accept", "application/json")
+          .set("access_token", tokenUser)
+          .send(newTrip)
+          .then((res) => {
+            const { status, body } = res;
+            expect(status).toBe(403);
+            expect(body).toHaveProperty("message", expect.any(String));
+            done();
+          });
+      });
+  });
+});
+
+describe("GET /trips ", () => {
+  test(" 200, should be return some object  [SUCCES POST DATA TRIP]", (done) => {
+    const loginUser = {
+      email: "testUser@mail.com",
+      password: "password",
+    };
+
+    request(app)
+      .post("/login")
+      .send(loginUser)
+      .then((data) => {
+        let tokenUser = data.body.access_token;
+        const newTrip = {
+          tripOrigin: "Jerman",
+          tripDestination: "Berlin",
+        };
+        return request(app)
+          .post("/trips")
+          .set("Accept", "application/json")
+          .set("access_token", tokenUser)
+          .send(newTrip)
+          .then(() => {
+            return request(app)
+              .get("/trips")
+              .set("Accept", "application/json")
+              .set("access_token", tokenUser)
+              .then((res) => {
+                const { body, status } = res;
+                expect(status).toBe(200);
+                expect(Array.isArray(body)).toBeTruthy();
+                expect(body.length).toBeGreaterThan(0);
+                done();
+              });
+          });
+      });
   });
 });
 
 let newTripError = {
-  userId: 3,
+  userId: 2,
   tripOrigin: "Jerman",
   tripDestination: "Berlin",
   isQuarantined: false,

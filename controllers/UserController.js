@@ -24,9 +24,9 @@ class UserController {
           exclude: ["password", "createdAt", "updatedAt"],
         },
       });
-      if (response.length === 0) {
-        throw { name: "404", message: "Can't find user" };
-      }
+      // if (response.length === 0) {
+      //   throw { name: "404", message: "Can't find user" };
+      // }
       res.status(200).json(getPagingData(response, page, limit));
     } catch (error) {
       next(error);
