@@ -159,7 +159,10 @@ class UserController {
         },
       });
       if (!quarantineDetail) {
-        throw { name: "404", message: "User not on active quarantine" };
+        throw {
+          name: "404",
+          message: "User not on active quarantine",
+        };
       }
 
       const currentLocation = await QuarantineLocation.findByPk(
